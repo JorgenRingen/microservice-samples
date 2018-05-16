@@ -1,0 +1,20 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{9999} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger level="WARN" name="org.springframework" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger level="WARN" name="org.apache" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
