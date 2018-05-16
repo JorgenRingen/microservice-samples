@@ -18,7 +18,7 @@ class EmployeesTest {
 
     @Test
     void findAllEmployeesShouldReturn200() {
-        List<Employee> employees = restClient.getAllEmployees();
+        List<Employee> employees = restClient.findAllEmployees();
         assertThat(employees).isNotNull();
     }
 
@@ -36,7 +36,7 @@ class EmployeesTest {
         long id = Long.valueOf(locationUrl.substring(locationUrl.lastIndexOf("/") + 1)); // last segment should be id
 
         employee.setId(id);
-        List<Employee> employees = restClient.getAllEmployees();
+        List<Employee> employees = restClient.findAllEmployees();
         assertThat(employees).as("Created employee should be returned by find all").containsOnlyOnce(employee);
     }
 
@@ -44,7 +44,7 @@ class EmployeesTest {
     void findEmployeeByIdThatDoesntExistShouldReturn404() {
         Throwable thrown = catchThrowable(() -> restClient.getEmployee(-99999));
         assertThat(thrown)
-                .as("Request to '/employees/{employeeId}' with id that doesn't exist should return 404")
+                .as("GET request to '/employees/{employeeId}' with id that doesn't exist should return 404")
                 .isInstanceOf(HttpClientErrorException.class)
                 .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
     }
@@ -53,55 +53,63 @@ class EmployeesTest {
     void updateEmployeeThatDoesntExistShouldReturn404() {
         Throwable thrown = catchThrowable(() -> restClient.getEmployee(-99999));
         assertThat(thrown)
-                .as("Request to '/employees/{employeeId}' with id that doesn't exist should return 404")
+                .as("PUT request to '/employees/{employeeId}' with id that doesn't exist should return 404")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    }
+
+    @Test
+    void deleteEmployeeThatDoesntExistShouldReturn404() {
+        Throwable thrown = catchThrowable(() -> restClient.deleteEmployee(-99999));
+        assertThat(thrown)
+                .as("DELETE request to '/employees/{employeeId}' with id that doesn't exist should return 404")
                 .isInstanceOf(HttpClientErrorException.class)
                 .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
     }
 
     @Test
     void crudEmployeeShouldWorkAccordingToHttpSpec() {
-        // create
-        var firstname = "John";
-        var lastname = "Doe";
-        var dateOfBirth = LocalDate.of(1986, 7, 8);
+        long employeeId = createEmployee();
+        updateEmployee(employeeId);
+        deleteEmployee(employeeId);
+    }
 
-        Employee employeeToCreate = new Employee(firstname, lastname, dateOfBirth);
+    private long createEmployee() {
+        Employee employeeToCreate = new Employee("John", "Doe", LocalDate.of(1986, 7, 8));
         ResponseEntity<Employee> createEmployeeResponse = restClient.createEmployee(employeeToCreate);
         assertThat(createEmployeeResponse.getStatusCode()).as("Status code from create employee should be 201").isEqualTo(HttpStatus.CREATED);
         assertThat(createEmployeeResponse.getHeaders().getLocation()).as("Location header from create employee should be returned").isNotNull();
 
-        // read
-        ResponseEntity<Employee> readCreatedEmployeeResponse = restClient.getEmployee(createEmployeeResponse.getHeaders().getLocation());
-        assertThat(readCreatedEmployeeResponse.getStatusCode()).as("Created employee should be retrievable from location header").isEqualTo(HttpStatus.OK);
-        Employee createdEmployee = readCreatedEmployeeResponse.getBody();
+        ResponseEntity<Employee> readEmployeeResponse = restClient.getEmployee(createEmployeeResponse.getHeaders().getLocation());
+        assertThat(readEmployeeResponse.getStatusCode()).as("Created employee should be retrievable from location header").isEqualTo(HttpStatus.OK);
+        Employee createdEmployee = readEmployeeResponse.getBody();
         assertThat(createdEmployee.getId()).as("Created employee should be assigned an id").isNotNull();
-        assertThat(createdEmployee.getFirstName()).as("Created employee should get firstname from request").isEqualTo(firstname);
-        assertThat(createdEmployee.getLastName()).as("Created employee should get lastname from request").isEqualTo(lastname);
-        assertThat(createdEmployee.getDateOfBirth()).as("Created employee should get dateOfBirth from request").isEqualTo(dateOfBirth);
+        assertThat(createdEmployee.getFirstname()).as("Created employee should get firstname from request").isEqualTo(employeeToCreate.getFirstname());
+        assertThat(createdEmployee.getLastname()).as("Created employee should get lastname from request").isEqualTo(employeeToCreate.getLastname());
+        assertThat(createdEmployee.getDateOfBirth()).as("Created employee should get dateOfBirth from request").isEqualTo(employeeToCreate.getDateOfBirth());
 
-        // update
-        var updatedFirstname = "Jane";
-        var updatedLastName = "Smith";
-        var updatedDateOfBirth = LocalDate.of(1999, 1, 1);
-        Employee employeeToUpdate = new Employee(createdEmployee.getId(), updatedFirstname, updatedLastName, updatedDateOfBirth);
+        return createdEmployee.getId();
+    }
 
-        ResponseEntity<Employee> updateEmployeeResponse = restClient.updateEmployee(employeeToUpdate);
-        assertThat(updateEmployeeResponse.getStatusCode()).as("Status code from update employee should be 200").isEqualTo(HttpStatus.OK);
+    private void updateEmployee(long employeeId) {
+        Employee employeeToUpdate = new Employee(employeeId, "Jane", "Smith", LocalDate.of(1999, 1, 1));
+        restClient.updateEmployee(employeeToUpdate);
 
-        Employee updatedEmployee = updateEmployeeResponse.getBody();
+        ResponseEntity<Employee> readEmployeeResponse = restClient.getEmployee(employeeId);
+        Employee updatedEmployee = readEmployeeResponse.getBody();
         assertThat(updatedEmployee.getId()).as("Updated employee should have an id").isEqualTo(employeeToUpdate.getId());
-        assertThat(updatedEmployee.getFirstName()).as("Updated employee should get firstname from request").isEqualTo(updatedFirstname);
-        assertThat(updatedEmployee.getLastName()).as("Updated employee should get lastname from request").isEqualTo(updatedLastName);
-        assertThat(updatedEmployee.getDateOfBirth()).as("Updated employee should get dateOfBirth from request").isEqualTo(updatedDateOfBirth);
+        assertThat(updatedEmployee.getFirstname()).as("Updated employee should get firstname from request").isEqualTo(employeeToUpdate.getFirstname());
+        assertThat(updatedEmployee.getLastname()).as("Updated employee should get lastname from request").isEqualTo(employeeToUpdate.getLastname());
+        assertThat(updatedEmployee.getDateOfBirth()).as("Updated employee should get dateOfBirth from request").isEqualTo(employeeToUpdate.getDateOfBirth());
+    }
 
-        // delete
-        Throwable thrownByDelete = catchThrowable(() -> restClient.deleteEmployee(createdEmployee.getId()));
+    private void deleteEmployee(long employeeId) {
+        Throwable thrownByDelete = catchThrowable(() -> restClient.deleteEmployee(employeeId));
         assertThat(thrownByDelete)
                 .as("Delete existing employee should not throw exception")
                 .doesNotThrowAnyException();
 
-        // read deleted
-        Throwable thrownByRead = catchThrowable(() -> restClient.getEmployee(createdEmployee.getId()));
+        Throwable thrownByRead = catchThrowable(() -> restClient.getEmployee(employeeId));
         assertThat(thrownByRead)
                 .as("Find deleted employee should return 404")
                 .isInstanceOf(HttpClientErrorException.class)

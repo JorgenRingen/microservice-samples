@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import org.mssamples.tests.model.Company;
 import org.mssamples.tests.model.Employee;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +49,12 @@ class RestClient {
         return new RestTemplate(httpComponentsClientHttpRequestFactory);
     }
 
-    List<Employee> getAllEmployees() {
-        ResponseEntity<Employee[]> companiesResponseEntity = restTemplate.getForEntity(APP_URL + "/employees", Employee[].class);
-        assertThat(companiesResponseEntity.getStatusCode()).as("/employees should always return 200").isEqualTo(HttpStatus.OK);
-        return Arrays.asList(companiesResponseEntity.getBody());
+    // Employee
+
+    List<Employee> findAllEmployees() {
+        ResponseEntity<Employee[]> employeesResponseEntity = restTemplate.getForEntity(APP_URL + "/employees", Employee[].class);
+        assertThat(employeesResponseEntity.getStatusCode()).as("/employees should always return 200").isEqualTo(HttpStatus.OK);
+        return Arrays.asList(employeesResponseEntity.getBody());
     }
 
     ResponseEntity<Employee> getEmployee(long employeeId) {
@@ -72,8 +75,42 @@ class RestClient {
         return restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(employeeToUpdate), Employee.class);
     }
 
-    void deleteEmployee(Long id) {
+    void deleteEmployee(long id) {
         String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("employees/" + id).toUriString();
         restTemplate.delete(uri);
+    }
+
+    // Company
+
+    List<Company> findAllCompanies() {
+        ResponseEntity<Company[]> companiesResponseEntity = restTemplate.getForEntity(APP_URL + "/companies", Company[].class);
+        assertThat(companiesResponseEntity.getStatusCode()).as("/companies should always return 200").isEqualTo(HttpStatus.OK);
+        return Arrays.asList(companiesResponseEntity.getBody());
+    }
+
+    ResponseEntity<Company> createCompany(Company company) {
+        return restTemplate.postForEntity(APP_URL + "/companies", company, Company.class);
+    }
+
+    ResponseEntity<Company> getCompany(long companyId) {
+        String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("/companies/" + companyId).toUriString();
+        return restTemplate.getForEntity(uri, Company.class);
+    }
+
+    ResponseEntity<Company> getCompany(URI uri) {
+        return restTemplate.getForEntity(uri, Company.class);
+    }
+
+    void deleteCompany(long companyId) {
+        String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("companies/" + companyId).toUriString();
+        restTemplate.delete(uri);
+    }
+
+    ResponseEntity<Company> addEmployeeToCompany(Long companyId, long employeeId) {
+        return restTemplate.postForEntity(APP_URL + "/companies/" + companyId + "/employees/" + employeeId, null, Company.class);
+    }
+
+    void removeEmployeeFromCompany(Long companyId, long employeeId) {
+        restTemplate.delete(APP_URL + "/companies/" + companyId + "/employees/" + employeeId);
     }
 }
