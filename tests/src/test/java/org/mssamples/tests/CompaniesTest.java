@@ -59,10 +59,73 @@ class CompaniesTest {
     }
 
     @Test
-    void addAndRemoveEmployeesFromCompany() {
+    void addAndRemoveEmployeesFromCompanySuccessfully() {
         long companyId = createCompany();
-        long employeeId = createEmployeeAndAddToCompany(companyId);
-        removeEmployeeFromCompany(companyId, employeeId);
+        long employeeId = createEmployee();
+        addEmployeeToCompanyOk(companyId, employeeId);
+        removeEmployeeFromCompanyOk(companyId, employeeId);
+    }
+
+    @Test
+    void addEmployeeToCompanyThatDoesntExistShouldReturn404() {
+        Throwable thrown = catchThrowable(() -> restClient.addEmployeeToCompany(-99999, -9999));
+        assertThat(thrown)
+                .as("Adding employee to a company that doesn't exist should return 404")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    }
+
+    @Test
+    void addEmployeeThatDoesntExistToCompanyThatExistShouldReturn404() {
+        long companyId = createCompany();
+        Throwable thrown = catchThrowable(() -> restClient.addEmployeeToCompany(companyId, -9999));
+        assertThat(thrown)
+                .as("Adding employee that doesn't exist to a company should return 404")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    }
+
+    @Test
+    void addEmployeeToCompanyWhereEmployeeAlreadyBelongsShouldReturn400() {
+        long companyId = createCompany();
+        long employeeId = createEmployee();
+        restClient.addEmployeeToCompany(companyId, employeeId);
+
+        Throwable thrown = catchThrowable(() -> restClient.addEmployeeToCompany(companyId, employeeId));
+        assertThat(thrown)
+                .as("Adding employee to company where employee already belong should return 400")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.BAD_REQUEST.toString());
+    }
+
+    @Test
+    void removeEmployeeFromCompanyThatDoesntExistShouldReturn404() {
+        Throwable thrown = catchThrowable(() -> restClient.removeEmployeeFromCompany(-99999, -9999));
+        assertThat(thrown)
+                .as("Removing employee from a company that doesn't exist should return 404")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    }
+
+    @Test
+    void removeEmployeeThatDoesntExistFromCompanyThatExistShouldReturn400() {
+        long companyId = createCompany();
+        Throwable thrown = catchThrowable(() -> restClient.removeEmployeeFromCompany(companyId, -9999));
+        assertThat(thrown)
+                .as("Removing employee that doesn't exist from a company 400")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.BAD_REQUEST.toString());
+    }
+
+    @Test
+    void removeEmployeeFromCompanyThatTheEmployeeDoesntBelongToShouldReturn422() {
+        long companyId = createCompany();
+        long employeeId = createEmployee();
+        Throwable thrown = catchThrowable(() -> restClient.removeEmployeeFromCompany(companyId, employeeId));
+        assertThat(thrown)
+                .as("Removing employee from a company that the employee doesn't belong to should return 422")
+                .isInstanceOf(HttpClientErrorException.class)
+                .hasMessageContaining(HttpStatus.UNPROCESSABLE_ENTITY.toString());
     }
 
     private long createCompany() {
@@ -82,24 +145,24 @@ class CompaniesTest {
         return createdCompany.getId();
     }
 
-    private long createEmployeeAndAddToCompany(long companyId) {
-        Employee employee = new Employee("John", "Doe", LocalDate.of(1986, 7, 8));
-        ResponseEntity<Employee> createEmployeeResponse = restClient.createEmployee(employee);
+    private long createEmployee() {
+        Employee employeeToCreate = new Employee("John", "Doe", LocalDate.of(1986, 7, 8));
+        ResponseEntity<Employee> createEmployeeResponse = restClient.createEmployee(employeeToCreate);
         ResponseEntity<Employee> readEmployeeResponse = restClient.getEmployee(createEmployeeResponse.getHeaders().getLocation());
-        long employeeId = readEmployeeResponse.getBody().getId();
+        return readEmployeeResponse.getBody().getId();
+    }
 
+    private void addEmployeeToCompanyOk(long companyId, long employeeId) {
         ResponseEntity<Company> addEmployeeToCompanyResponse = restClient.addEmployeeToCompany(companyId, employeeId);
-        assertThat(addEmployeeToCompanyResponse.getStatusCode()).as("Status code from add employee to company should be 200").isEqualTo(HttpStatus.OK);
+        assertThat(addEmployeeToCompanyResponse.getStatusCode()).as("Status code from add employee to company should be 204").isEqualTo(HttpStatus.NO_CONTENT);
 
         ResponseEntity<Company> readCompanyResponse = restClient.getCompany(companyId);
         Company company = readCompanyResponse.getBody();
         assertThat(company.getEmployees()).as("Company should have 1 employee").hasSize(1);
         assertThat(company.getEmployees().iterator().next().getId()).as("Company should have employee that was added").isEqualTo(employeeId);
-
-        return employeeId;
     }
 
-    private void removeEmployeeFromCompany(long companyId, long employeeId) {
+    private void removeEmployeeFromCompanyOk(long companyId, long employeeId) {
         restClient.removeEmployeeFromCompany(companyId, employeeId);
         ResponseEntity<Company> readCompanyResponse = restClient.getCompany(companyId);
         assertThat(readCompanyResponse.getBody().getEmployees()).as("Company should have 0 employees after removal").hasSize(0);

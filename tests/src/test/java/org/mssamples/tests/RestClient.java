@@ -106,11 +106,11 @@ class RestClient {
         restTemplate.delete(uri);
     }
 
-    ResponseEntity<Company> addEmployeeToCompany(Long companyId, long employeeId) {
-        return restTemplate.postForEntity(APP_URL + "/companies/" + companyId + "/employees/" + employeeId, null, Company.class);
+    ResponseEntity<Company> addEmployeeToCompany(long companyId, long employeeId) {
+        return restTemplate.postForEntity(APP_URL + "/companies/" + companyId + "/employees", employeeId, Company.class);
     }
 
-    void removeEmployeeFromCompany(Long companyId, long employeeId) {
+    void removeEmployeeFromCompany(long companyId, long employeeId) {
         restTemplate.delete(APP_URL + "/companies/" + companyId + "/employees/" + employeeId);
     }
 }

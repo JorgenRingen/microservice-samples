@@ -51,7 +51,7 @@ class EmployeesTest {
 
     @Test
     void updateEmployeeThatDoesntExistShouldReturn404() {
-        Throwable thrown = catchThrowable(() -> restClient.getEmployee(-99999));
+        Throwable thrown = catchThrowable(() -> restClient.updateEmployee(new Employee(-99999L, null, null, null)));
         assertThat(thrown)
                 .as("PUT request to '/employees/{employeeId}' with id that doesn't exist should return 404")
                 .isInstanceOf(HttpClientErrorException.class)
