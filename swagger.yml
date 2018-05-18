@@ -1,0 +1,262 @@
+swagger: '2.0'
+info:
+  description: Microservice Samples API
+  version: '1.0'
+  title: Microservice Samples API
+  termsOfService: 'http://www.github.com'
+  contact:
+    name: Jørgen Ringen
+    url: https://github.com/JorgenRingen/microservice-samples
+    email: jorgen.ringen@gmail.com
+  license:
+    name: Apache License 2.0
+host: 'localhost:8080'
+basePath: /
+tags:
+  - name: Company Resource
+  - name: Employee Resource
+schemes:
+  - http
+paths:
+  /companies:
+    get:
+      tags:
+        - Company Resource
+      summary: Find all companies
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: Returning list of companies
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Company'
+    post:
+      tags:
+        - Company Resource
+      summary: Create company
+      consumes:
+        - application/json
+      produces:
+        - 'application/json'
+      parameters:
+        - in: body
+          name: company
+          description: company
+          required: true
+          schema:
+            $ref: '#/definitions/Company'
+      responses:
+        '201':
+          description: Company was created (see location header in response)
+        '400':
+          description: Bad request
+  '/companies/{companyId}/employees':
+    post:
+      tags:
+        - Company Resource
+      summary: Add employee to company
+      consumes:
+        - application/json
+      produces:
+        - 'application/json'
+      parameters:
+        - name: companyId
+          in: path
+          description: companyId
+          required: true
+          type: string
+        - in: body
+          name: employeeId
+          description: employeeId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Employee was added to company
+        '400':
+          description: Employee doesn't exist or employee already belongs to company
+        '404':
+          description: Company was not found
+  '/companies/{companyId}/employees/{employeeId}':
+    delete:
+      tags:
+        - Company Resource
+      summary: Remove employee from company
+      produces:
+        - 'application/json'
+      parameters:
+        - name: companyId
+          in: path
+          description: companyId
+          required: true
+          type: string
+        - name: employeeId
+          in: path
+          description: employeeId
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Employee was removed from company
+        '404':
+          description: Company or employee was not found
+  '/companies/{id}':
+    get:
+      tags:
+        - Company Resource
+      summary: Find company by id
+      produces:
+        - 'application/json'
+      parameters:
+        - name: id
+          in: path
+          description: Company id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Company was found
+          schema:
+            $ref: '#/definitions/Company'
+        '404':
+          description: Company not found
+    delete:
+      tags:
+        - Company Resource
+      summary: Delete company
+      produces:
+        - 'application/json'
+      parameters:
+        - name: id
+          in: path
+          description: Company id
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Company deleted
+        '404':
+          description: Company not found
+  /employees:
+    get:
+      tags:
+        - Employee Resource
+      summary: Find all employees
+      produces:
+        - 'application/json'
+      responses:
+        '200':
+          description: Returning list of employees
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Employee'
+    post:
+      tags:
+        - Employee Resource
+      summary: Create employee
+      consumes:
+        - application/json
+      produces:
+        - 'application/json'
+      parameters:
+        - in: body
+          name: employee
+          description: employee
+          required: true
+          schema:
+            $ref: '#/definitions/Employee'
+      responses:
+        '201':
+          description: Employee was created (see location header in response)
+  '/employees/{id}':
+    get:
+      tags:
+        - Employee Resource
+      summary: Find employee by id
+      produces:
+        - 'application/json'
+      parameters:
+        - name: id
+          in: path
+          description: Employee id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Employee was found
+          schema:
+            $ref: '#/definitions/Employee'
+        '404':
+          description: Employee not found
+    put:
+      tags:
+        - Employee Resource
+      summary: Update employee
+      consumes:
+        - application/json
+      produces:
+        - 'application/json'
+      parameters:
+        - in: body
+          name: employee
+          description: employee
+          required: true
+          schema:
+            $ref: '#/definitions/Employee'
+        - name: id
+          in: path
+          description: Employee id
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Employee updated
+        '404':
+          description: Employee not found
+    delete:
+      tags:
+        - Employee Resource
+      summary: Delete employee
+      produces:
+        - 'application/json'
+      parameters:
+        - name: id
+          in: path
+          description: Employee id
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Employee deleted
+        '404':
+          description: Employee not found
+definitions:
+  Company:
+    type: object
+    properties:
+      employees:
+        type: array
+        items:
+          $ref: '#/definitions/Employee'
+      id:
+        type: string
+      name:
+        type: string
+    title: Company
+  Employee:
+    type: object
+    properties:
+      dateOfBirth:
+        type: string
+        format: date
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+    title: Employee

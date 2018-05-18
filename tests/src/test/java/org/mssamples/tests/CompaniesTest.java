@@ -25,7 +25,7 @@ class CompaniesTest {
 
     @Test
     void findAllShouldReturnCompanyThatExists() {
-        var name = "ACME Industries";
+        String name = "ACME Industries";
         Company company = new Company();
         company.setName(name);
 
@@ -35,8 +35,8 @@ class CompaniesTest {
         String locationUrl = createCompanyResponse.getHeaders().getLocation().toString();
         long id = Long.valueOf(locationUrl.substring(locationUrl.lastIndexOf("/") + 1)); // last segment should be id
 
-        company.setId(id);
         List<Company> companies = restClient.findAllCompanies();
+        company.setId(id);
         assertThat(companies).as("Created company should be returned by find all").containsOnlyOnce(company);
     }
 
@@ -86,7 +86,7 @@ class CompaniesTest {
     }
 
     @Test
-    void addEmployeeToCompanyWhereEmployeeAlreadyBelongsShouldReturn400() {
+    void addEmployeeToCompanyWhereEmployeeAlreadyBelongShouldReturn400() {
         long companyId = createCompany();
         long employeeId = createEmployee();
         restClient.addEmployeeToCompany(companyId, employeeId);
@@ -130,7 +130,7 @@ class CompaniesTest {
 
     private long createCompany() {
         Company companyToCreate = new Company();
-        companyToCreate.setName("Company with employees!");
+        companyToCreate.setName("Oracle");
         ResponseEntity<Company> createCompanyResponse = restClient.createCompany(companyToCreate);
         assertThat(createCompanyResponse.getStatusCode()).as("Status code from create company should be 201").isEqualTo(HttpStatus.CREATED);
         assertThat(createCompanyResponse.getHeaders().getLocation()).as("Location header from create company should be returned").isNotNull();
