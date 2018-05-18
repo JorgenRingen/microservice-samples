@@ -6,7 +6,9 @@ Demonstrates how to write the same sample application with different technologie
 Applications implemented with different technology stacks can be found in the subfolders. Please name each application folder by listing the most essential technologies (for example: spring-boot-and-spring-boot-data-jpa)
 
 ### API
-The application implements a CRUD-style REST-api with the following Swagger-definition: [todo url]
+All applications must implement a CRUD-style REST-api according to [this swagger specification.](https://github.com/JorgenRingen/microservice-samples/blob/master/swagger.yml)
+
+<img src="https://imgur.com/a/wD3zRsz" width="30%" height="30%">
 
 ### Domain
 The domain model of the consists of two entities:
