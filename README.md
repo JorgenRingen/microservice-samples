@@ -26,7 +26,7 @@ Company
 	- employees : Set<Employee>
 ```
 
-<img src="https://i.imgur.com/Wit9FQ4.png" width="100%" height="100%">
+<img src="https://i.imgur.com/Wit9FQ4.png" width="75%" height="75%">
 
 ### Database
 The application should connect to a PostgreSQL database created with the following schema: [todo]
