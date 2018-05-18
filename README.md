@@ -8,7 +8,7 @@ Applications implemented with different technology stacks can be found in the su
 ### API
 All applications must implement a CRUD-style REST-api according to [this swagger specification.](https://github.com/JorgenRingen/microservice-samples/blob/master/swagger.yml)
 
-<img src="https://imgur.com/a/wD3zRsz" width="30%" height="30%">
+<img src="https://i.imgur.com/wPQ0GYz.png" width="30%" height="30%">
 
 ### Domain
 The domain model of the consists of two entities:
