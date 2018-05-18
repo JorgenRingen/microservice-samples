@@ -16,7 +16,7 @@ The domain model consists of two entities:
 <img src="https://i.imgur.com/GA2TNb3.png" width="50%" height="50%">
 
 ### Database
-The application should connect to a PostgreSQL database created with [this schema]()URL.
+The application should connect to a PostgreSQL database created with [this schema](https://github.com/JorgenRingen/microservice-samples/blob/master/db/init.sql).
 
 A postgresql docker-image initialised with the schema is located in the `./db` directory. A docker-container can be built and run like this:
 ```bash
