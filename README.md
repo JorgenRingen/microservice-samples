@@ -1,5 +1,5 @@
 # Microservice Samples
-Demonstrates how to write the same sample application with different technologies.
+Shows how the exactly same application can be implemented with different technology stacks.
 
 ## Application
 
@@ -11,51 +11,38 @@ All applications must implement a CRUD-style REST-api according to [this swagger
 <img src="https://i.imgur.com/wPQ0GYz.png" width="75%" height="75%">
 
 ### Domain
-The domain model of the consists of two entities:
+The domain model consists of two entities:
 
-```
-Employee
-	- id : number
-	- firstname : string
-	- lastname : string
-	- dateOfBirth - date
-
-Company
-	- id : number
-	- name : string
-	- employees : Set<Employee>
-```
-
-<img src="https://i.imgur.com/Wit9FQ4.png" width="50%" height="50%">
+<img src="https://i.imgur.com/GA2TNb3.png" width="50%" height="50%">
 
 ### Database
-The application should connect to a PostgreSQL database created with the following schema: [todo]
+The application should connect to a PostgreSQL database created with [this schema]()URL.
 
-There is a docker-image initialised with the schema in the `./db` directory which can be started like this:
+A postgresql docker-image initialised with the schema is located in the `./db` directory. A docker-container can be built and run like this:
 ```bash
 cd ./db
 docker build -t ms-samples/db .
 docker run -p 5432:5432 ms-samples/db
 ```
 
+```
 - port: 5432
 - database: companies
 - username: user
-- password: secret
-
-[todo verify]
+- password: password
+```
 
 ### Testing
-Tests for the REST-api can be found in the `./tests` directory. The folder contains a postman test-suite that can be executed command-line with newman. The test-suite verifies all operations of the API and the functional flow. 
-
-[todo mekk]
+A JUnit testsuite for the REST-api can be found in the `./tests` directory. The test-suite verifies all operations of the API and the functional flow. Tests can be executed by running `mvn test` in the `./tests` directory. 
 
 ## Application Principles
 Each application should be implemented according to the relevant principles in [The Twelve Factor Aps](https://12factor.net/). 
 
 The motivation here is to provide somewhat production-ready sample applications, so here are some loosely defined requirements for each application:
 - Contain a README.md that explains how to build and run the application and pre-requisites
-- Configuration should be overridable by the environment and not  hardcoded in the application
-- Should implement some form of logging
+- Configuration should be overridable by the environment and not hardcoded in the application
 - Should have some form of testing (integration tests and/or junit tests)
 - Should preferably have a Dockerfile so the application can be built and run as a Docker container
+
+## Contribution
+Please contribute pull-requests with your unique technology stack and implementation :-)
