@@ -1,9 +1,9 @@
 # Microservice Samples
-Shows how the exactly same application can be implemented with different technology stacks.
+Shows how a simple sample-application can be implemented with different technology stacks.
 
 ## Application
 
-Applications implemented with different technology stacks can be found in the subfolders. Please name each application folder by listing the most essential technologies (for example: spring-boot-and-spring-boot-data-jpa)
+Implementations can be found in the subfolders. Please name the application folder by listing the most essential technologies separated by underscore (for example: spring-boot_spring-data-jpa_spring-web)
 
 ### API
 All applications must implement a CRUD-style REST-api according to [this swagger specification.](https://github.com/JorgenRingen/microservice-samples/blob/master/swagger.yml)
@@ -36,7 +36,7 @@ docker run -p 5432:5432 ms-samples/db
 A JUnit testsuite for the REST-api can be found in the `./tests` directory. The test-suite verifies all operations of the API and the functional flow. Tests can be executed by running `mvn test` in the `./tests` directory. 
 
 ## Application Principles
-Each application should be implemented according to the relevant principles in [The Twelve Factor Aps](https://12factor.net/). 
+Each application should be implemented according to relevant principles in [The Twelve Factor Aps](https://12factor.net/). 
 
 The motivation here is to provide somewhat production-ready sample applications, so here are some loosely defined requirements for each application:
 - Contain a README.md that explains how to build and run the application and pre-requisites
