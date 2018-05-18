@@ -8,7 +8,7 @@ Applications implemented with different technology stacks can be found in the su
 ### API
 All applications must implement a CRUD-style REST-api according to [this swagger specification.](https://github.com/JorgenRingen/microservice-samples/blob/master/swagger.yml)
 
-<img src="https://i.imgur.com/wPQ0GYz.png" width="50%" height="50%">
+<img src="https://i.imgur.com/wPQ0GYz.png" width="75%" height="75%">
 
 ### Domain
 The domain model of the consists of two entities:
@@ -26,7 +26,7 @@ Company
 	- employees : Set<Employee>
 ```
 
-[todo uml-diagram?]
+<img src="https://i.imgur.com/Wit9FQ4.png" width="100%" height="100%">
 
 ### Database
 The application should connect to a PostgreSQL database created with the following schema: [todo]
