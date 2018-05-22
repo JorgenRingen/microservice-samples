@@ -1,0 +1,20 @@
+spring:
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    default-property-inclusion: non_null
+    serialization:
+     write-dates-as-timestamps: false
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/companies
+    username: user
+    password: password
+  jpa:
+    open-in-view: true
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true # https://github.com/spring-projects/spring-boot/issues/12007#issuecomment-369388646
+    hibernate:
+      ddl-auto: none
