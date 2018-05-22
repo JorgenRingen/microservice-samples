@@ -1,3 +1,5 @@
+# WIP!
+
 # Sample application using spring boot cli
 
 Technologies:
