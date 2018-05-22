@@ -41,20 +41,20 @@ public class CompanyResource {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Company> findById(@PathVariable final Long id) {
-        final Optional<Company> company = companyRepository.findById(id);
+    public ResponseEntity<Company> findById(@PathVariable long id) {
+        Optional<Company> company = companyRepository.findById(id);
         return company.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Long> post(@RequestBody final Company company, UriComponentsBuilder uri) {
-        final Long id = companyRepository.save(company).getId();
-        final URI path = uri.path(RESOURCE_BASE_URI + "/" + id).build().toUri();
+    public ResponseEntity<Long> post(@RequestBody Company company, UriComponentsBuilder uri) {
+        long id = companyRepository.save(company).getId();
+        URI path = uri.path(RESOURCE_BASE_URI + "/" + id).build().toUri();
         return ResponseEntity.created(path).build();
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable final Long id) {
+    public ResponseEntity delete(@PathVariable long id) {
         Optional<Company> companyToDelete = companyRepository.findById(id);
         if (companyToDelete.isPresent()) {
             employeeRepository.deleteById(id);
@@ -65,7 +65,7 @@ public class CompanyResource {
     }
 
     @PostMapping("{companyId}/employees")
-    public ResponseEntity addEmployee(@PathVariable("companyId") Long companyId, @RequestBody Long employeeId) {
+    public ResponseEntity addEmployee(@PathVariable("companyId") long companyId, @RequestBody long employeeId) {
         Optional<Company> optionalCompany = companyRepository.findById(companyId);
         if (!optionalCompany.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -90,7 +90,7 @@ public class CompanyResource {
     }
 
     @DeleteMapping("{companyId}/employees/{employeeId}")
-    public ResponseEntity removeEmployee(@PathVariable("companyId") Long companyId, @PathVariable("employeeId") Long employeeId) {
+    public ResponseEntity removeEmployee(@PathVariable("companyId") long companyId, @PathVariable("employeeId") long employeeId) {
         Optional<Company> optionalCompany = companyRepository.findById(companyId);
         if (!optionalCompany.isPresent()) {
             return ResponseEntity.notFound().build();

@@ -2,6 +2,7 @@
 
 Technologies:
 - JDK 8
+- Tomcat (embedded)
 - Spring Boot
 - Spring Boot Data JPA
 - Spring Web

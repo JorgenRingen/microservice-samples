@@ -37,20 +37,20 @@ public class EmployeeResource {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Employee> findById(@PathVariable final Long id) {
-        final Optional<Employee> employee = employeeRepository.findById(id);
+    public ResponseEntity<Employee> findById(@PathVariable long id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
         return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Long> post(@RequestBody final Employee employee, UriComponentsBuilder uri) {
-        final Long id = employeeRepository.save(employee).getId();
-        final URI path = uri.path(RESOURCE_BASE_URI + "/" + id).build().toUri();
+    public ResponseEntity<Long> post(@RequestBody Employee employee, UriComponentsBuilder uri) {
+        long id = employeeRepository.save(employee).getId();
+        URI path = uri.path(RESOURCE_BASE_URI + "/" + id).build().toUri();
         return ResponseEntity.created(path).build();
     }
 
     @PutMapping("{id}")
-    public ResponseEntity put(@PathVariable final Long id, @RequestBody final Employee employee) {
+    public ResponseEntity put(@PathVariable long id, @RequestBody Employee employee) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         if (optionalEmployee.isPresent()) {
             Employee employeeToUpdate = optionalEmployee.get();
@@ -63,9 +63,9 @@ public class EmployeeResource {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable final Long id) {
-        Optional<Employee> employeeToDelete = employeeRepository.findById(id);
-        if (employeeToDelete.isPresent()) {
+    public ResponseEntity delete(@PathVariable long id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
             employeeRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } else {
