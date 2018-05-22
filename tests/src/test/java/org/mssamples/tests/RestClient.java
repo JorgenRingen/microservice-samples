@@ -24,12 +24,12 @@ class RestClient {
     private static final String APP_URL;
 
     static {
-        var providedAppUrl = System.getProperty("appUrl");
+        String providedAppUrl = System.getProperty("appUrl");
         if (providedAppUrl != null) {
             LOGGER.debug("Running tests with provided application url: {}", providedAppUrl);
             APP_URL = providedAppUrl;
         } else {
-            var defaultAppUrl = "http://localhost:8080/";
+            String defaultAppUrl = "http://localhost:8080/";
             LOGGER.debug("Application url not provided, running tests with default url: {}", defaultAppUrl);
             LOGGER.debug("You can provide a custom url by setting 'appUrl' command line argument (mvn test -DappUrl=http://yourUrl:1337)");
             APP_URL = defaultAppUrl;

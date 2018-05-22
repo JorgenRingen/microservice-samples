@@ -24,9 +24,9 @@ class EmployeesTest {
 
     @Test
     void findAllShouldReturnEmployeeThatExists() {
-        var firstname = "John";
-        var lastname = "Doe";
-        var dateOfBirth = LocalDate.of(1986, 7, 8);
+        String firstname = "John";
+        String lastname = "Doe";
+        LocalDate dateOfBirth = LocalDate.of(1986, 7, 8);
         Employee employee = new Employee(firstname, lastname, dateOfBirth);
 
         ResponseEntity<Employee> createEmployeeResponse = restClient.createEmployee(employee);
