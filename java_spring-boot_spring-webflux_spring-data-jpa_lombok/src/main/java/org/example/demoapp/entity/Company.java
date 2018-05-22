@@ -1,4 +1,4 @@
-package org.example.demo.entity;
+package org.example.demoapp.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,6 +28,20 @@ public class Company {
 
     private String name;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<Employee> employees;
+
+    public boolean isEmployeeEmployed(long employeeId) {
+        return employees.stream()
+                .anyMatch(employee -> employee.getId().equals(employeeId));
+    }
+
+    public void addEmployee(Employee employee) {
+        employees.add(employee);
+    }
+
+    public void removeEmployee(Employee employee) {
+        employees.remove(employee);
+    }
+
 }

@@ -1,4 +1,4 @@
-package org.example.demo.entity;
+package org.example.demoapp.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,13 +27,10 @@ public class Employee {
     private String lastname;
     private LocalDate dateOfBirth;
 
-    public Employee update(Employee employee) {
-        return Employee.builder()
-                .id(employee.getId())
-                .dateOfBirth(employee.dateOfBirth)
-                .firstname(employee.getFirstname())
-                .lastname(employee.getLastname())
-                .build();
+    public void update(Employee employee) {
+        this.firstname = employee.firstname;
+        this.lastname = employee.lastname;
+        this.dateOfBirth = employee.dateOfBirth;
     }
 }
 
