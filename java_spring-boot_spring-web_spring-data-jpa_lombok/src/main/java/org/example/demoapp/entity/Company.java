@@ -29,4 +29,17 @@ public class Company {
 
     @OneToMany
     private Set<Employee> employees;
+
+    public boolean isEmployeeEmployed(long employeeId) {
+        return employees.stream()
+                .anyMatch(employee -> employee.getId().equals(employeeId));
+    }
+
+    public void addEmployee(Employee employee) {
+        employees.add(employee);
+    }
+
+    public void removeEmployee(Employee employee) {
+        employees.remove(employee);
+    }
 }

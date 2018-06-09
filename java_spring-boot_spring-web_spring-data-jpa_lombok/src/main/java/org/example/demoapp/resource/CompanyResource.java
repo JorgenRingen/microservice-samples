@@ -77,13 +77,12 @@ public class CompanyResource {
         }
 
         Company company = optionalCompany.get();
-        boolean employeeAlreadyInCompany = company.getEmployees().stream()
-                .anyMatch(employee -> employee.getId().equals(employeeId));
+        boolean employeeAlreadyEmployed = company.isEmployeeEmployed(employeeId);
 
-        if (employeeAlreadyInCompany) {
+        if (employeeAlreadyEmployed) {
             return ResponseEntity.badRequest().body("Employee with id=" + employeeId + " already in company with id=" + companyId);
         } else {
-            company.getEmployees().add(optionalEmployee.get());
+            company.addEmployee(optionalEmployee.get());
             companyRepository.save(company);
             return ResponseEntity.noContent().build();
         }
@@ -102,10 +101,8 @@ public class CompanyResource {
         }
 
         Company company = optionalCompany.get();
-        boolean employeeRemoved = company.getEmployees().remove(optionalEmployee.get());
-        if (employeeRemoved) {
-            companyRepository.save(company);
-        }
+        company.removeEmployee(optionalEmployee.get());
+        companyRepository.save(company);
 
         return ResponseEntity.noContent().build();
     }
