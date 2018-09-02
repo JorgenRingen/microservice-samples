@@ -1,0 +1,7 @@
+version: '3'
+services:
+
+  database:
+    image: jorgenringen/ms_samples_postgres
+    ports:
+      - 5432:5432
