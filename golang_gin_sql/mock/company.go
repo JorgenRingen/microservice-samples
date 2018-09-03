@@ -2,6 +2,8 @@ package mock
 
 import (
 	"log"
+	"math/rand"
+	"strconv"
 
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
 )
@@ -22,22 +24,50 @@ type CompanyService struct {
 }
 
 func (m *CompanyService) SaveCompany(company *api.Company) error {
+	log.Printf("[mock.CompanyService] SaveCompany(company = %+v)\n", company)
+
 	m.SaveCompanyCalled = true
+
+	if m.SaveCompanyFn == nil {
+		return nil
+	}
+
 	return m.SaveCompanyFn(company)
 }
 
 func (m *CompanyService) FindAllCompanies() (*api.Companies, error) {
+	log.Println("[mock.CompanyService] FindAllCompanies()")
+
 	m.FindAllCompaniesCalled = true
+
+	if m.FindAllCompaniesFn == nil {
+		return nil, nil
+	}
+
 	return m.FindAllCompaniesFn()
 }
 
 func (m *CompanyService) FindCompanyByID(companyID string) (*api.Company, error) {
+	log.Printf("[mock.CompanyService] FindCompanyByID(companyID = %s)\n", companyID)
+
 	m.FindCompanyByIDCalled = true
+
+	if m.FindCompanyByIDFn == nil {
+		return nil, nil
+	}
+
 	return m.FindCompanyByIDFn(companyID)
 }
 
 func (m *CompanyService) DeleteCompanyWithID(companyID string) error {
+	log.Printf("[mock.CompanyService] DeleteCompanyWithID(companyID = %s)\n", companyID)
+
 	m.DeleteCompanyWithIDCalled = true
+
+	if m.DeleteCompanyWithIDFn == nil {
+		return nil
+	}
+
 	return m.DeleteCompanyWithIDFn(companyID)
 }
 
@@ -65,9 +95,11 @@ func (m *CompanyService) RemoveEmployeeFromCompany(companyID string, employeeID 
 	return m.RemoveEmployeeFromCompanyFn(companyID, employeeID)
 }
 
+// DefaultCompanyService constructs a mocked CompanyService using some sensible defaults
 func DefaultCompanyService() *CompanyService {
 	return &CompanyService{
 		SaveCompanyFn: func(company *api.Company) error {
+			company.ID = strconv.Itoa(rand.Intn(100) + 1)
 			return nil
 		},
 		FindAllCompaniesFn: func() (*api.Companies, error) {

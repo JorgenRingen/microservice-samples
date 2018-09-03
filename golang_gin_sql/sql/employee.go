@@ -6,18 +6,11 @@ import (
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
 )
 
+// SaveEmployee saves an employee using the supplied RowQueryer
 func SaveEmployee(dx RowQueryer, employee *api.Employee) error {
 	const query = `
-		insert into employee (
-			date_of_birth,
-			firstname,
-			lastname
-		)
-		values (
-			$1,
-			$2,
-			$3
-		)
+		insert into employee (date_of_birth, firstname, lastname)
+		values ($1, $2, $3)
 		returning id;
 	`
 
@@ -36,6 +29,7 @@ func SaveEmployee(dx RowQueryer, employee *api.Employee) error {
 	return nil
 }
 
+// UpdateEmployee updates an employee using the supplied Execer
 func UpdateEmployee(dx Execer, employee *api.Employee) error {
 	const query = `
 		update employee set
@@ -57,22 +51,13 @@ func UpdateEmployee(dx Execer, employee *api.Employee) error {
 		return err
 	}
 
-	rowsAffected, err := res.RowsAffected()
-
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return api.ErrNotFound
-	}
-
-	return nil
+	return notFound(res)
 }
 
+// FindAllEmployees finds all employees using the supplied Queryer
 func FindAllEmployees(dx Queryer) (*api.Employees, error) {
 	const query = `
-		select
+		select 
 			employee.id,
 			employee.date_of_birth,
 			employee.firstname,
@@ -124,6 +109,7 @@ func FindAllEmployees(dx Queryer) (*api.Employees, error) {
 	return employees, nil
 }
 
+// FindEmployeeByID finds an employee by employeeID using the supplied RowQueryer
 func FindEmployeeByID(dx RowQueryer, employeeID string) (*api.Employee, error) {
 	const query = `
 		select
@@ -163,6 +149,7 @@ func FindEmployeeByID(dx RowQueryer, employeeID string) (*api.Employee, error) {
 	return employee, nil
 }
 
+// DeleteEmployeeWithID deletes the employee with employeeID using the supplied Execer
 func DeleteEmployeeWithID(dx Execer, employeeID string) error {
 	const query = `
 		delete from employee
@@ -175,15 +162,5 @@ func DeleteEmployeeWithID(dx Execer, employeeID string) error {
 		return err
 	}
 
-	rowsAffected, err := res.RowsAffected()
-
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return api.ErrNotFound
-	}
-
-	return nil
+	return notFound(res)
 }

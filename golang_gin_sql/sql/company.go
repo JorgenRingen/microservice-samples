@@ -6,14 +6,11 @@ import (
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
 )
 
+// SaveCompany saves a company using the supplied RowQueryer
 func SaveCompany(dx RowQueryer, company *api.Company) error {
 	const query = `
-		insert into company (
-			name
-		)
-		values (
-			$1
-		)
+		insert into company (name)
+		values ($1)
 		returning id;
 	`
 
@@ -27,6 +24,7 @@ func SaveCompany(dx RowQueryer, company *api.Company) error {
 	return nil
 }
 
+// FindAllCompanies finds all companies using the supplied Queryer
 func FindAllCompanies(dx Queryer) (*api.Companies, error) {
 	const query = `
 		select
@@ -48,7 +46,6 @@ func FindAllCompanies(dx Queryer) (*api.Companies, error) {
 
 	for rows.Next() {
 		company := &api.Company{}
-
 		err = rows.Scan(&company.ID, &company.Name)
 
 		if err != nil {
@@ -67,6 +64,7 @@ func FindAllCompanies(dx Queryer) (*api.Companies, error) {
 	return companies, nil
 }
 
+// FindCompanyByID finds a company by companyID using the supplied RowQueryer
 func FindCompanyByID(dx RowQueryer, companyID string) (*api.Company, error) {
 	const query = `
 		select
@@ -78,10 +76,7 @@ func FindCompanyByID(dx RowQueryer, companyID string) (*api.Company, error) {
 
 	company := &api.Company{}
 	row := dx.QueryRow(query, companyID)
-	err := row.Scan(
-		&company.ID,
-		&company.Name,
-	)
+	err := row.Scan(&company.ID, &company.Name)
 
 	if err == sql.ErrNoRows {
 		return nil, api.ErrNotFound
@@ -94,6 +89,7 @@ func FindCompanyByID(dx RowQueryer, companyID string) (*api.Company, error) {
 	return company, nil
 }
 
+// FindCompanyEmployees finds the employees of a company using the supplied Queryer
 func FindCompanyEmployees(dx Queryer, companyID string) (*api.Employees, error) {
 	const query = `
 		select
@@ -131,7 +127,6 @@ func FindCompanyEmployees(dx Queryer, companyID string) (*api.Employees, error) 
 		}
 
 		employee.CompanyID = companyID
-
 		*employees = append(*employees, employee)
 	}
 
@@ -144,10 +139,11 @@ func FindCompanyEmployees(dx Queryer, companyID string) (*api.Employees, error) 
 	return employees, nil
 }
 
+// DeleteCompanyWithID deletes the company with companyID using the supplied Execer
 func DeleteCompanyWithID(dx Execer, companyID string) error {
 	const query = `
 		delete from company
-		where id = $1;
+		where id = $1; 
 	`
 
 	res, err := dx.Exec(query, companyID)
@@ -156,25 +152,13 @@ func DeleteCompanyWithID(dx Execer, companyID string) error {
 		return err
 	}
 
-	rowsAffected, err := res.RowsAffected()
-
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return api.ErrNotFound
-	}
-
-	return nil
+	return notFound(res)
 }
 
+// AddEmployeeToCompany adds an employee to a company using the supplied Execer
 func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) error {
 	const query = `
-		insert into company_employees (
-			company_id,
-			employees_id
-		)
+		insert into company_employees (company_id, employees_id)
 		select
 			company.id,
 			employee.id
@@ -190,19 +174,10 @@ func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) error 
 		return err
 	}
 
-	rowsAffected, err := res.RowsAffected()
-
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return api.ErrNotFound
-	}
-
-	return nil
+	return notFound(res)
 }
 
+// RemoveEmployeeFromCompany removes an employee from a company using the supplied Execer
 func RemoveEmployeeFromCompany(dx Execer, companyID string, employeeID string) error {
 	const query = `
 		delete from company_employees
@@ -215,15 +190,5 @@ func RemoveEmployeeFromCompany(dx Execer, companyID string, employeeID string) e
 		return err
 	}
 
-	rowsAffected, err := res.RowsAffected()
-
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return api.ErrNotFound
-	}
-
-	return nil
+	return notFound(res)
 }

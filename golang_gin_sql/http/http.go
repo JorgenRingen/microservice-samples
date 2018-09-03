@@ -60,13 +60,6 @@ func noContent(c *gin.Context, fn errFunc) {
 	c.Status(http.StatusNoContent)
 }
 
-func handleError(c *gin.Context, err error) {
-	if code, ok := err.(api.HttpStatusCode); ok {
-		c.Status(int(code))
-		return
-	}
-}
-
 func internalServerError(c *gin.Context, err error) {
 	log.Println(err)
 	c.AbortWithError(http.StatusInternalServerError, err)

@@ -15,13 +15,13 @@ import (
 func main() {
 	godotenv.Load()
 
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-
-	db, err := sql.NewDB(dbUser, dbPassword, dbName, dbHost, dbPort)
+	db, err := sql.NewDB(
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+	)
 
 	if err != nil {
 		log.Fatalln(err)

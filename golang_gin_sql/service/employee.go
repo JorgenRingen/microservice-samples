@@ -29,6 +29,7 @@ func (s *employeeService) DeleteEmployeeWithID(employeeID string) error {
 	return sql.DeleteEmployeeWithID(s.db, employeeID)
 }
 
-func Employee(db *sql.DB) *employeeService {
+// Employee constructs an EmployeeService
+func Employee(db *sql.DB) api.EmployeeService {
 	return &employeeService{db}
 }

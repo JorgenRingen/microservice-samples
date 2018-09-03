@@ -21,7 +21,7 @@ type EmployeeService struct {
 }
 
 func (m *EmployeeService) SaveEmployee(employee *api.Employee) error {
-	log.Printf("[mock.EmployeeService] SaveEmployee(employee = %v)\n", employee)
+	log.Printf("[mock.EmployeeService] SaveEmployee(employee = %+v)\n", employee)
 
 	m.SaveEmployeeCalled = true
 
@@ -68,6 +68,7 @@ func (m *EmployeeService) DeleteEmployeeWithID(employeeID string) error {
 	return m.DeleteEmployeeWithIDFn(employeeID)
 }
 
+// DefaultEmployeeService constructs a mocked EmployeeService using some sensible defaults
 func DefaultEmployeeService() *EmployeeService {
 	return &EmployeeService{
 		SaveEmployeeFn: func(employee *api.Employee) error {
@@ -79,8 +80,8 @@ func DefaultEmployeeService() *EmployeeService {
 				&api.Employee{
 					ID:          "1",
 					DateOfBirth: &api.Date{Time: time.Now()},
-					FirstName:   "FirstName",
-					LastName:    "LastName",
+					FirstName:   "First",
+					LastName:    "Last",
 				},
 			}, nil
 		},
@@ -88,8 +89,8 @@ func DefaultEmployeeService() *EmployeeService {
 			return &api.Employee{
 				ID:          employeeID,
 				DateOfBirth: &api.Date{Time: time.Now()},
-				FirstName:   "FirstName",
-				LastName:    "LastName",
+				FirstName:   "First",
+				LastName:    "Last",
 			}, nil
 		},
 	}

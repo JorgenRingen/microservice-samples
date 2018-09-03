@@ -25,7 +25,7 @@ func bindCompany(c *gin.Context) (*api.Company, error) {
 	}, nil
 }
 
-func PostCompanyHandler(a api.CompanySaver) gin.HandlerFunc {
+func postCompanyHandler(a api.CompanySaver) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		created(c, func() (string, error) {
 			company, err := bindCompany(c)
@@ -45,7 +45,7 @@ func PostCompanyHandler(a api.CompanySaver) gin.HandlerFunc {
 	}
 }
 
-func GetAllCompaniesHandler(a api.AllCompaniesFinder) gin.HandlerFunc {
+func getAllCompaniesHandler(a api.AllCompaniesFinder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ok(c, func() (interface{}, error) {
 			return a.FindAllCompanies()
@@ -53,7 +53,7 @@ func GetAllCompaniesHandler(a api.AllCompaniesFinder) gin.HandlerFunc {
 	}
 }
 
-func GetCompanyByIDHandler(a api.CompanyByIDFinder) gin.HandlerFunc {
+func getCompanyByIDHandler(a api.CompanyByIDFinder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ok(c, func() (interface{}, error) {
 			return a.FindCompanyByID(c.Param("companyID"))
@@ -61,8 +61,7 @@ func GetCompanyByIDHandler(a api.CompanyByIDFinder) gin.HandlerFunc {
 	}
 }
 
-// DeleteCompanyWithIDHandler -> DELETE /companies/{id}
-func DeleteCompanyWithIDHandler(a api.CompanyWithIDDeleter) gin.HandlerFunc {
+func deleteCompanyWithIDHandler(a api.CompanyWithIDDeleter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		noContent(c, func() error {
 			return a.DeleteCompanyWithID(c.Param("companyID"))
@@ -70,8 +69,7 @@ func DeleteCompanyWithIDHandler(a api.CompanyWithIDDeleter) gin.HandlerFunc {
 	}
 }
 
-// PostEmployeeToCompanyHandler -> POST /companies/{companyId}/employees
-func PostEmployeeToCompanyHandler(a api.EmployeeToCompanyAdder) gin.HandlerFunc {
+func postEmployeeToCompanyHandler(a api.EmployeeToCompanyAdder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		noContent(c, func() error {
 			var employeeID json.Number
@@ -87,8 +85,7 @@ func PostEmployeeToCompanyHandler(a api.EmployeeToCompanyAdder) gin.HandlerFunc 
 	}
 }
 
-// DeleteEmployeeFromCompanyHandler -> DELETE /companies/{companyId}/employees/{employeeId}
-func DeleteEmployeeFromCompanyHandler(a api.EmployeeFromCompanyRemover) gin.HandlerFunc {
+func deleteEmployeeFromCompanyHandler(a api.EmployeeFromCompanyRemover) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		noContent(c, func() error {
 			return a.RemoveEmployeeFromCompany(c.Param("companyID"), c.Param("employeeID"))

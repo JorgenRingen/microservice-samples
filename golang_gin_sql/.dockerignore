@@ -1,4 +1,5 @@
 .env
 gin-bin
+start
 .gitignore
 docker-compose.yml

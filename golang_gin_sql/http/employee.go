@@ -30,7 +30,7 @@ func bindEmployee(c *gin.Context) (*api.Employee, error) {
 	}, nil
 }
 
-func PostEmployeeHandler(a api.EmployeeSaver) gin.HandlerFunc {
+func postEmployeeHandler(a api.EmployeeSaver) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		created(c, func() (string, error) {
 			employee, err := bindEmployee(c)
@@ -50,7 +50,7 @@ func PostEmployeeHandler(a api.EmployeeSaver) gin.HandlerFunc {
 	}
 }
 
-func GetAllEmployeesHandler(a api.AllEmployeesFinder) gin.HandlerFunc {
+func getAllEmployeesHandler(a api.AllEmployeesFinder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ok(c, func() (interface{}, error) {
 			return a.FindAllEmployees()
@@ -58,7 +58,7 @@ func GetAllEmployeesHandler(a api.AllEmployeesFinder) gin.HandlerFunc {
 	}
 }
 
-func GetEmployeeByIDHandler(a api.EmployeeByIDFinder) gin.HandlerFunc {
+func getEmployeeByIDHandler(a api.EmployeeByIDFinder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ok(c, func() (interface{}, error) {
 			return a.FindEmployeeByID(c.Param("employeeID"))
@@ -66,7 +66,7 @@ func GetEmployeeByIDHandler(a api.EmployeeByIDFinder) gin.HandlerFunc {
 	}
 }
 
-func PutEmployeeWithIDHandler(a api.EmployeeSaver) gin.HandlerFunc {
+func putEmployeeWithIDHandler(a api.EmployeeSaver) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		noContent(c, func() error {
 			employee, err := bindEmployee(c)
@@ -84,7 +84,7 @@ func PutEmployeeWithIDHandler(a api.EmployeeSaver) gin.HandlerFunc {
 	}
 }
 
-func DeleteEmployeeWithIDHandler(a api.EmployeeWithIDDeleter) gin.HandlerFunc {
+func deleteEmployeeWithIDHandler(a api.EmployeeWithIDDeleter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		noContent(c, func() error {
 			return a.DeleteEmployeeWithID(c.Param("employeeID"))

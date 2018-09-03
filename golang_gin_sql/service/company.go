@@ -75,6 +75,7 @@ func (s *companyService) RemoveEmployeeFromCompany(companyID string, employeeID 
 	return err
 }
 
-func Company(db *sql.DB) *companyService {
+// Company constructs a CompanyService
+func Company(db *sql.DB) api.CompanyService {
 	return &companyService{db}
 }
