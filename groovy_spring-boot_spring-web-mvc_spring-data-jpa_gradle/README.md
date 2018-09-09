@@ -9,5 +9,5 @@ Technologies:
 - Jackson
 - Junit
 
-Build: `gradlew build`
-Run: `java -jar ./target/demoapp-0.0.1-SNAPSHOT.jar` or `mvn spring-boot:run`
+Build: `./gradlew build`
+Run: `java -jar ./build/libs/demoapp-0.0.1-SNAPSHOT.jar` or `mvn spring-boot:run`
