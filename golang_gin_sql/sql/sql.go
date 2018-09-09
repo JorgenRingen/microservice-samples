@@ -51,16 +51,16 @@ func NewDB(user, password, database, host, port string) (*DB, error) {
 	return &DB{db}, nil
 }
 
-func notFound(res sql.Result) error {
+func notFound(res sql.Result) (err error) {
 	rowsAffected, err := res.RowsAffected()
 
 	if err != nil {
-		return err
+		return
 	}
 
 	if rowsAffected == 0 {
-		return api.ErrNotFound
+		err = api.ErrNotFound
 	}
 
-	return nil
+	return
 }

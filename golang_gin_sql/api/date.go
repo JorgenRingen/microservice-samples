@@ -27,28 +27,28 @@ func (d *Date) MarshalJSON() ([]byte, error) {
 	return json.Marshal([3]int{d.Year(), int(d.Month()), d.Day()})
 }
 
-func (d *Date) UnmarshalJSON(b []byte) error {
+func (d *Date) UnmarshalJSON(b []byte) (err error) {
 	if d == nil {
-		return nil
+		return
 	}
 
 	var a [3]int
 
-	err := json.Unmarshal(b, &a)
+	err = json.Unmarshal(b, &a)
 
 	if err != nil {
-		return err
+		return
 	}
 
 	t, err := time.Parse(DateLayout, fmt.Sprintf("%d-%d-%d", a[0], a[1], a[2]))
 
 	if err != nil {
-		return err
+		return
 	}
 
 	d.Time = t
 
-	return nil
+	return
 }
 
 func (d *Date) Scan(src interface{}) error {

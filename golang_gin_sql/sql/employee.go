@@ -20,17 +20,12 @@ func SaveEmployee(dx RowQueryer, employee *api.Employee) error {
 		employee.FirstName,
 		employee.LastName,
 	)
-	err := row.Scan(&employee.ID)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return row.Scan(&employee.ID)
 }
 
 // UpdateEmployee updates an employee using the supplied Execer
-func UpdateEmployee(dx Execer, employee *api.Employee) error {
+func UpdateEmployee(dx Execer, employee *api.Employee) (err error) {
 	const query = `
 		update employee set
 			date_of_birth = $1,
@@ -48,14 +43,14 @@ func UpdateEmployee(dx Execer, employee *api.Employee) error {
 	)
 
 	if err != nil {
-		return err
+		return
 	}
 
 	return notFound(res)
 }
 
 // FindAllEmployees finds all employees using the supplied Queryer
-func FindAllEmployees(dx Queryer) (*api.Employees, error) {
+func FindAllEmployees(dx Queryer) (employees *api.Employees, err error) {
 	const query = `
 		select 
 			employee.id,
@@ -71,12 +66,12 @@ func FindAllEmployees(dx Queryer) (*api.Employees, error) {
 	rows, err := dx.Query(query)
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	defer Close(rows)
 
-	employees := &api.Employees{}
+	employees = &api.Employees{}
 
 	for rows.Next() {
 		employee := &api.Employee{}
@@ -90,7 +85,7 @@ func FindAllEmployees(dx Queryer) (*api.Employees, error) {
 		)
 
 		if err != nil {
-			return nil, err
+			return
 		}
 
 		if companyID.Valid {
@@ -102,15 +97,11 @@ func FindAllEmployees(dx Queryer) (*api.Employees, error) {
 
 	err = rows.Err()
 
-	if err != nil {
-		return nil, err
-	}
-
-	return employees, nil
+	return
 }
 
 // FindEmployeeByID finds an employee by employeeID using the supplied RowQueryer
-func FindEmployeeByID(dx RowQueryer, employeeID string) (*api.Employee, error) {
+func FindEmployeeByID(dx RowQueryer, employeeID string) (employee *api.Employee, err error) {
 	const query = `
 		select
 			employee.id,
@@ -123,10 +114,10 @@ func FindEmployeeByID(dx RowQueryer, employeeID string) (*api.Employee, error) {
 		where employee.id = $1;
 	`
 
-	employee := &api.Employee{}
+	employee = &api.Employee{}
 	companyID := sql.NullString{}
 	row := dx.QueryRow(query, employeeID)
-	err := row.Scan(
+	err = row.Scan(
 		&employee.ID,
 		&employee.DateOfBirth,
 		&employee.FirstName,
@@ -139,18 +130,18 @@ func FindEmployeeByID(dx RowQueryer, employeeID string) (*api.Employee, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	if companyID.Valid {
 		employee.CompanyID = companyID.String
 	}
 
-	return employee, nil
+	return
 }
 
 // DeleteEmployeeWithID deletes the employee with employeeID using the supplied Execer
-func DeleteEmployeeWithID(dx Execer, employeeID string) error {
+func DeleteEmployeeWithID(dx Execer, employeeID string) (err error) {
 	const query = `
 		delete from employee
 		where id = $1;
@@ -159,7 +150,7 @@ func DeleteEmployeeWithID(dx Execer, employeeID string) error {
 	res, err := dx.Exec(query, employeeID)
 
 	if err != nil {
-		return err
+		return
 	}
 
 	return notFound(res)

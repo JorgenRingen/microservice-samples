@@ -15,17 +15,12 @@ func SaveCompany(dx RowQueryer, company *api.Company) error {
 	`
 
 	row := dx.QueryRow(query, company.Name)
-	err := row.Scan(&company.ID)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return row.Scan(&company.ID)
 }
 
 // FindAllCompanies finds all companies using the supplied Queryer
-func FindAllCompanies(dx Queryer) (*api.Companies, error) {
+func FindAllCompanies(dx Queryer) (companies *api.Companies, err error) {
 	const query = `
 		select
 			id,
@@ -37,19 +32,19 @@ func FindAllCompanies(dx Queryer) (*api.Companies, error) {
 	rows, err := dx.Query(query)
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	defer Close(rows)
 
-	companies := &api.Companies{}
+	companies = &api.Companies{}
 
 	for rows.Next() {
 		company := &api.Company{}
 		err = rows.Scan(&company.ID, &company.Name)
 
 		if err != nil {
-			return nil, err
+			return
 		}
 
 		*companies = append(*companies, company)
@@ -57,15 +52,11 @@ func FindAllCompanies(dx Queryer) (*api.Companies, error) {
 
 	err = rows.Err()
 
-	if err != nil {
-		return nil, err
-	}
-
-	return companies, nil
+	return
 }
 
 // FindCompanyByID finds a company by companyID using the supplied RowQueryer
-func FindCompanyByID(dx RowQueryer, companyID string) (*api.Company, error) {
+func FindCompanyByID(dx RowQueryer, companyID string) (company *api.Company, err error) {
 	const query = `
 		select
 			id,
@@ -74,23 +65,19 @@ func FindCompanyByID(dx RowQueryer, companyID string) (*api.Company, error) {
 		where id = $1;
 	`
 
-	company := &api.Company{}
+	company = &api.Company{}
 	row := dx.QueryRow(query, companyID)
-	err := row.Scan(&company.ID, &company.Name)
+	err = row.Scan(&company.ID, &company.Name)
 
 	if err == sql.ErrNoRows {
 		return nil, api.ErrNotFound
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
-	return company, nil
+	return
 }
 
 // FindCompanyEmployees finds the employees of a company using the supplied Queryer
-func FindCompanyEmployees(dx Queryer, companyID string) (*api.Employees, error) {
+func FindCompanyEmployees(dx Queryer, companyID string) (employees *api.Employees, err error) {
 	const query = `
 		select
 			employee.id,
@@ -106,12 +93,12 @@ func FindCompanyEmployees(dx Queryer, companyID string) (*api.Employees, error) 
 	rows, err := dx.Query(query, companyID)
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	defer Close(rows)
 
-	employees := &api.Employees{}
+	employees = &api.Employees{}
 
 	for rows.Next() {
 		employee := &api.Employee{}
@@ -132,15 +119,11 @@ func FindCompanyEmployees(dx Queryer, companyID string) (*api.Employees, error) 
 
 	err = rows.Err()
 
-	if err != nil {
-		return nil, err
-	}
-
-	return employees, nil
+	return
 }
 
 // DeleteCompanyWithID deletes the company with companyID using the supplied Execer
-func DeleteCompanyWithID(dx Execer, companyID string) error {
+func DeleteCompanyWithID(dx Execer, companyID string) (err error) {
 	const query = `
 		delete from company
 		where id = $1; 
@@ -149,14 +132,14 @@ func DeleteCompanyWithID(dx Execer, companyID string) error {
 	res, err := dx.Exec(query, companyID)
 
 	if err != nil {
-		return err
+		return
 	}
 
 	return notFound(res)
 }
 
 // AddEmployeeToCompany adds an employee to a company using the supplied Execer
-func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) error {
+func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) (err error) {
 	const query = `
 		insert into company_employees (company_id, employees_id)
 		select
@@ -171,14 +154,14 @@ func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) error 
 	res, err := dx.Exec(query, companyID, employeeID)
 
 	if err != nil {
-		return err
+		return
 	}
 
 	return notFound(res)
 }
 
 // RemoveEmployeeFromCompany removes an employee from a company using the supplied Execer
-func RemoveEmployeeFromCompany(dx Execer, companyID string, employeeID string) error {
+func RemoveEmployeeFromCompany(dx Execer, companyID string, employeeID string) (err error) {
 	const query = `
 		delete from company_employees
 		where company_id = $1 and employees_id = $2;
@@ -187,7 +170,7 @@ func RemoveEmployeeFromCompany(dx Execer, companyID string, employeeID string) e
 	res, err := dx.Exec(query, companyID, employeeID)
 
 	if err != nil {
-		return err
+		return
 	}
 
 	return notFound(res)
