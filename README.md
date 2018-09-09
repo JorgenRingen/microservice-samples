@@ -3,7 +3,7 @@ Shows how a simple sample-application can be implemented with different technolo
 
 ## Application
 
-Implementations can be found in the subfolders. Please name the application folder by listing the most essential technologies separated by underscore (for example: spring-boot_spring-data-jpa_spring-web)
+Implementations can be found in the subfolders. Please name the application folder by listing the most essential technologies separated by underscore (for example: spring-boot_spring-data-jpa_spring-web). If the application is "work in progress", please postfix the folder name with "wip_"
 
 ### API
 All applications must implement a CRUD-style REST-api according to [this swagger specification.](https://github.com/JorgenRingen/microservice-samples/blob/master/swagger.yml)
