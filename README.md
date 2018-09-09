@@ -39,6 +39,7 @@ The motivation here is to provide somewhat production-ready sample applications,
 - Configuration should be overridable by the environment and not hardcoded in the application
 - Should have some form of testing (integration tests and/or junit tests)
 - Should preferably have a Dockerfile so the application can be built and run as a Docker container
+- Contain a buildAndRun.sh that builds and starts the application
 
 ## Contribution
 Please contribute pull-requests with your unique technology stack and implementation :-)
