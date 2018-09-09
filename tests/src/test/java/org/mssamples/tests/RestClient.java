@@ -3,6 +3,7 @@ package org.mssamples.tests;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.mssamples.tests.model.Company;
 import org.mssamples.tests.model.Employee;
@@ -13,8 +14,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,9 +54,22 @@ class RestClient {
 
     private RestTemplate createRestTemplate() {
         HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-        httpComponentsClientHttpRequestFactory.setReadTimeout(5_000);
-        return new RestTemplate(httpComponentsClientHttpRequestFactory);
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(10_000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(10_000);
+
+        RestTemplate restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+        messageConverter.setPrettyPrint(false);
+        messageConverter.setObjectMapper(objectMapper);
+        restTemplate.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName()));
+        restTemplate.getMessageConverters().add(messageConverter);
+
+        return restTemplate;
     }
 
     // Employee
