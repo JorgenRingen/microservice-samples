@@ -1,0 +1,9 @@
+version: '3'
+services:
+  demoapp:
+    build: .
+    ports:
+    - "8080:8080"
+    - "4848:4848"
+  postgresql:
+    image: "jorgenringen/ms_samples_postgres"
