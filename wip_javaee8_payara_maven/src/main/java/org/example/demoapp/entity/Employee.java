@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Employee {
@@ -23,17 +24,6 @@ public class Employee {
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
-
-    public Employee() {
-
-    }
-
-    public Employee(Long id, String firstname, String lastname, LocalDate dateOfBirth) {
-        this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.dateOfBirth = dateOfBirth;
-    }
 
     public Long getId() {
         return id;
@@ -65,5 +55,25 @@ public class Employee {
 
     public void setDateOfBirth(LocalDate dateOfbirth) {
         this.dateOfBirth = dateOfbirth;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id) &&
+                Objects.equals(firstname, employee.firstname) &&
+                Objects.equals(lastname, employee.lastname) &&
+                Objects.equals(dateOfBirth, employee.dateOfBirth);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstname, lastname, dateOfBirth);
     }
 }
