@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import java.time.LocalDate;
 
 @Data
@@ -26,7 +27,7 @@ public class Employee {
     private String lastname;
     private LocalDate dateOfBirth;
 
-    public Employee update(Employee employee) {
+    public Employee updateFrom(Employee employee) {
         return Employee.builder()
                 .id(employee.getId())
                 .dateOfBirth(employee.dateOfBirth)

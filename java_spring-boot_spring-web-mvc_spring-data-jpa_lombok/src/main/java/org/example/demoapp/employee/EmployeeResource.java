@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.example.demoapp.entity.Employee;
-import org.example.demoapp.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.demoapp.service.EmployeeNotFoundException;
+import org.example.demoapp.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,52 +24,44 @@ public class EmployeeResource {
 
     static final String RESOURCE_BASE_URI = "employees";
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    @Autowired
-    public EmployeeResource(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeResource(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping
     public ResponseEntity<List<Employee>> findAll() {
-        return ResponseEntity.ok(employeeRepository.findAll());
+        return ResponseEntity.ok(employeeService.findAll());
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Employee> findById(@PathVariable long id) {
-        Optional<Employee> employee = employeeRepository.findById(id);
+        Optional<Employee> employee = employeeService.findById(id);
         return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Long> post(@RequestBody Employee employee, UriComponentsBuilder uri) {
-        long id = employeeRepository.save(employee).getId();
+        long id = employeeService.save(employee).getId();
         URI path = uri.path(RESOURCE_BASE_URI + "/" + id).build().toUri();
         return ResponseEntity.created(path).build();
     }
 
     @PutMapping("{id}")
     public ResponseEntity put(@PathVariable long id, @RequestBody Employee employee) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
-        if (optionalEmployee.isPresent()) {
-            Employee employeeToUpdate = optionalEmployee.get();
-            Employee updatedEmployee = employeeToUpdate.update(employee);
-            employeeRepository.save(updatedEmployee);
-            return ResponseEntity.noContent().build();
-        } else {
+        try {
+            employeeService.updateEmployee(id, employee);
+        } catch (EmployeeNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity delete(@PathVariable long id) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
-        if (optionalEmployee.isPresent()) {
-            employeeRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        employeeService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
