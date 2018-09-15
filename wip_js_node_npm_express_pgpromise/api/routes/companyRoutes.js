@@ -9,7 +9,9 @@ module.exports = function (app) {
         .get(companyController.findById)
         .delete(companyController.delete);
 
+    app.route('/companies/:companyId/employees')
+        .post(companyController.addEmployee);
+
     app.route('/companies/:companyId/employees/:employeeId')
-        .post(companyController.addEmployee)
         .delete(companyController.removeEmployee);
 };

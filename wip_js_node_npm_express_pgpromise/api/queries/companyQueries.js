@@ -35,7 +35,7 @@ exports.findById = async function (companyId, resultHandler, errorHandler) {
         });
 
     if (companyRow) {
-        return db.any('select e.id, e.firstname, e.lastname, e.date_of_birth from employee e inner join company_employees ce on e.id = ce.employees_id where ce.company_id = $1', companyRow.id)
+        return db.any('select e.id, e.firstname, e.lastname, e.date_of_birth from employee e inner join company_employees ce on e.id = ce.employee_id where ce.company_id = $1', companyRow.id)
             .then(employeeRowsForCompany => {
                 const employeesForCompany = employeeRowsForCompany.map(employeeRow => employeeModel.fromEmployeeRow(employeeRow));
                 resultHandler(new companyModel(companyRow.id, companyRow.name, employeesForCompany));
@@ -70,7 +70,7 @@ exports.delete = function (companyId, resultHandler, errorHandler) {
 };
 
 exports.addEmployeeToCompany = function (companyId, employeeId, resultHandler, errorHandler) {
-    db.none('insert into company_employees(company_id, employees_id) values ($1, $2)', [ companyId, employeeId ])
+    db.none('insert into company_employees(company_id, employee_id) values ($1, $2)', [ companyId, employeeId ])
         .then(resultHandler())
         .catch(error => {
             errorHandler(error);
@@ -78,7 +78,7 @@ exports.addEmployeeToCompany = function (companyId, employeeId, resultHandler, e
 };
 
 exports.removeEmployeeFromCompany = function (companyId, employeeId, resultHandler, errorHandler) {
-    db.none('delete from company_employees where company_id = $1 and employees_id = $2', [ companyId, employeeId ])
+    db.none('delete from company_employees where company_id = $1 and employee_id = $2', [ companyId, employeeId ])
         .then(resultHandler())
         .catch(error => {
             errorHandler(error);

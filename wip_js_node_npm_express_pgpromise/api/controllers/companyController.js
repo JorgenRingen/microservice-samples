@@ -24,7 +24,8 @@ exports.create = function (req, res, next) {
     const company = new companyModel(null, name);
 
     companyQueries.create(company, function (id) {
-        res.location('/companies/' + id);
+        const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl + "/";
+        res.location(fullUrl + id);
         res.status(201).end();
     }, next);
 };
@@ -44,7 +45,7 @@ exports.delete = function (req, res, next) {
 
 exports.addEmployee = async function (req, res, next) {
     const companyId = req.params.companyId;
-    const employeeId = req.params.employeeId;
+    const employeeId = req.body.employeeId;
 
     await companyQueries.findById(companyId, async function (company) {
         if (company == null) {

@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 import java.util.Set;
@@ -28,6 +30,9 @@ public class Company {
     private String name;
 
     @OneToMany
+    @JoinTable(name = "company_employees",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "employee_id"))
     private Set<Employee> employees;
 
     public boolean isEmployeeEmployed(long employeeId) {

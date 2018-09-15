@@ -24,7 +24,7 @@ public class Company {
     @OneToMany
     @JoinTable(name = "company_employees",
             joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "employees_id"))
+            inverseJoinColumns = @JoinColumn(name = "employee_id"))
     private Set<Employee> employees = new HashSet<>();
 
     public Long getId() {
