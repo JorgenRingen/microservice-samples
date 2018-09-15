@@ -3,7 +3,6 @@ package org.mssamples.tests;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.mssamples.tests.model.Company;
 import org.mssamples.tests.model.Employee;
@@ -18,12 +17,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -98,9 +93,9 @@ class RestClient {
         return restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(employeeToUpdate), Employee.class);
     }
 
-    void deleteEmployee(long id) {
-        String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("employees/" + id).toUriString();
-        restTemplate.delete(uri);
+    ResponseEntity deleteEmployee(long employeeId) {
+        String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("employees/" + employeeId).toUriString();
+        return restTemplate.exchange(uri, HttpMethod.DELETE, null, Object.class);
     }
 
     // Company
@@ -124,16 +119,16 @@ class RestClient {
         return restTemplate.getForEntity(uri, Company.class);
     }
 
-    void deleteCompany(long companyId) {
+    ResponseEntity deleteCompany(long companyId) {
         String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("companies/" + companyId).toUriString();
-        restTemplate.delete(uri);
+        return restTemplate.exchange(uri, HttpMethod.DELETE, null, Object.class);
     }
 
     ResponseEntity<Company> addEmployeeToCompany(long companyId, long employeeId) {
         return restTemplate.postForEntity(APP_URL + "/companies/" + companyId + "/employees", employeeId, Company.class);
     }
 
-    ResponseEntity<Object> removeEmployeeFromCompany(long companyId, long employeeId) {
+    ResponseEntity removeEmployeeFromCompany(long companyId, long employeeId) {
         return restTemplate.exchange(APP_URL + "/companies/" + companyId + "/employees/" + employeeId, HttpMethod.DELETE, null, Object.class);
     }
 }

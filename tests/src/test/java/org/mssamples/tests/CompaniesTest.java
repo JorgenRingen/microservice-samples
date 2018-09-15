@@ -50,12 +50,9 @@ class CompaniesTest {
     }
 
     @Test
-    void deleteCompanyThatDoesntExistShouldReturn404() {
-        Throwable thrown = catchThrowable(() -> restClient.deleteCompany(-99999));
-        assertThat(thrown)
-                .as("DELETE request to '/companies/{companyId}' with id that doesn't exist should return 404")
-                .isInstanceOf(HttpClientErrorException.class)
-                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    void deleteCompanyThatDoesntExistShouldReturn204() {
+        ResponseEntity responseEntity = restClient.deleteCompany(-99999);
+        assertThat(responseEntity.getStatusCode()).as("DELETE request to '/companies/{companyId}' with id that doesn't exist should return 404").isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
@@ -99,30 +96,24 @@ class CompaniesTest {
     }
 
     @Test
-    void removeEmployeeFromCompanyThatDoesntExistShouldReturn404() {
-        Throwable thrown = catchThrowable(() -> restClient.removeEmployeeFromCompany(-99999, -9999));
-        assertThat(thrown)
-                .as("Removing employee from a company that doesn't exist should return 404")
-                .isInstanceOf(HttpClientErrorException.class)
-                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    void removeEmployeeFromCompanyThatDoesntExistShouldReturn204() {
+        ResponseEntity responseEntity = restClient.removeEmployeeFromCompany(-99999, -9999);
+        assertThat(responseEntity.getStatusCode()).as("Removing employee from a company that doesn't exist should return 204").isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
-    void removeEmployeeThatDoesntExistFromCompanyThatExistShouldReturn404() {
+    void removeEmployeeThatDoesntExistFromCompanyThatExistShouldReturn204() {
         long companyId = createCompany();
-        Throwable thrown = catchThrowable(() -> restClient.removeEmployeeFromCompany(companyId, -9999));
-        assertThat(thrown)
-                .as("Removing employee that doesn't exist from a company 404")
-                .isInstanceOf(HttpClientErrorException.class)
-                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+        ResponseEntity responseEntity = restClient.removeEmployeeFromCompany(companyId, -9999);
+        assertThat(responseEntity.getStatusCode()).as("Removing employee that doesn't exist from a company should return 204").isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
     void removeEmployeeFromCompanyThatTheEmployeeDoesntBelongToShouldReturn204() {
         long companyId = createCompany();
         long employeeId = createEmployee();
-        ResponseEntity<Object> deleteResponse = restClient.removeEmployeeFromCompany(companyId, employeeId);
-        assertThat(deleteResponse.getStatusCode()).as("Removing employee from a company that the employee doesn't belong to should return 204")
+        ResponseEntity responseEntity = restClient.removeEmployeeFromCompany(companyId, employeeId);
+        assertThat(responseEntity.getStatusCode()).as("Removing employee from a company that the employee doesn't belong to should return 204")
                 .isEqualTo(HttpStatus.NO_CONTENT);
     }
 
