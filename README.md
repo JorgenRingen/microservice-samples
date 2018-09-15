@@ -1,12 +1,12 @@
 # Microservice Samples
-Shows how a simple sample-application can be implemented with different technology stacks.
+Shows how a simple REST API can be implemented with different technology stacks.
 
 ## Application
 
-Implementations can be found in the subfolders. Please name the application folder by listing the most essential technologies separated by underscore (for example: spring-boot_spring-data-jpa_spring-web). If the application is "work in progress", please postfix the folder name with "wip_"
+Implementations can be found in the subfolders. Please name the application folder by listing the most essential technologies separated by underscore (for example: spring-boot_spring-data-jpa_spring-web). If the application is "work in progress", please prefix the folder name with "wip_"
 
 ### API
-All applications must implement a CRUD-style REST-api according to [this swagger specification.](https://github.com/JorgenRingen/microservice-samples/blob/master/swagger.yml)
+All applications must implement a CRUD-style REST-api according to this [swagger definition](https://app.swaggerhub.com/apis/JorgenRingen/microservice-samples/0.9#/)
 
 <img src="https://i.imgur.com/wPQ0GYz.png" width="75%" height="75%">
 
@@ -29,12 +29,12 @@ The application should connect to a PostgreSQL database created with [this schem
 ```
 
 ### Testing
-A JUnit testsuite for the REST-api can be found in the `./tests` directory. The test-suite verifies all operations of the API and the functional flow. Tests can be executed by running `mvn test` in the `./tests` directory. 
+A JUnit testsuite for the REST-api can be found in the `./tests` directory. The test-suite verifies all operations of the API and the functional flow. Tests can be executed by running `mvn test` in the `./tests` directory (requires running application and database).
 
 ## Application Principles
 Each application should be implemented according to relevant principles in [The Twelve Factor Aps](https://12factor.net/). 
 
-The motivation here is to provide somewhat production-ready sample applications, so here are some loosely defined requirements for each application:
+The motivation here is to provide somewhat production-ready cloud-native sample applications, so here are some loosely defined requirements for each application:
 - Contain a README.md that explains how to build and run the application and pre-requisites
 - Configuration should be overridable by the environment and not hardcoded in the application
 - Should have some form of testing (integration tests and/or junit tests)
