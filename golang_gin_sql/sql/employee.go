@@ -59,7 +59,7 @@ func FindAllEmployees(dx Queryer) (employees *api.Employees, err error) {
 			employee.lastname,
 			company_employees.company_id
 		from employee
-		left join company_employees on company_employees.employees_id = employee.id
+		left join company_employees on company_employees.employee_id = employee.id
 		order by employee.id;
 	`
 
@@ -110,7 +110,7 @@ func FindEmployeeByID(dx RowQueryer, employeeID string) (employee *api.Employee,
 			employee.lastname,
 			company_employees.company_id
 		from employee
-		left join company_employees on company_employees.employees_id = employee.id
+		left join company_employees on company_employees.employee_id = employee.id
 		where employee.id = $1;
 	`
 

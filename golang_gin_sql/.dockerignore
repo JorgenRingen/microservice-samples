@@ -1,9 +1,12 @@
 .env
 .gitignore
+build
+buildAndRun.sh
 docker-compose.ci.yml
 docker-compose.yml
 Dockerfile
 gin-bin
 README.md
 run
+server
 test

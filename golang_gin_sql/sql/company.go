@@ -85,7 +85,7 @@ func FindCompanyEmployees(dx Queryer, companyID string) (employees *api.Employee
 			employee.firstname,
 			employee.lastname
 		from employee
-		inner join company_employees on company_employees.employees_id = employee.id
+		inner join company_employees on company_employees.employee_id = employee.id
 		where company_employees.company_id = $1
 		order by employee.id;
 	`
@@ -141,7 +141,7 @@ func DeleteCompanyWithID(dx Execer, companyID string) (err error) {
 // AddEmployeeToCompany adds an employee to a company using the supplied Execer
 func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) (err error) {
 	const query = `
-		insert into company_employees (company_id, employees_id)
+		insert into company_employees (company_id, employee_id)
 		select
 			company.id,
 			employee.id
@@ -164,7 +164,7 @@ func AddEmployeeToCompany(dx Execer, companyID string, employeeID string) (err e
 func RemoveEmployeeFromCompany(dx Execer, companyID string, employeeID string) (err error) {
 	const query = `
 		delete from company_employees
-		where company_id = $1 and employees_id = $2;
+		where company_id = $1 and employee_id = $2;
 	`
 
 	res, err := dx.Exec(query, companyID, employeeID)
