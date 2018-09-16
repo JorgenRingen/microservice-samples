@@ -2,7 +2,6 @@ package http
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
@@ -24,7 +23,7 @@ func ok(c *gin.Context, fn objFunc) {
 	}
 
 	if err != nil {
-		internalServerError(c, err)
+		c.Error(err)
 		return
 	}
 
@@ -34,8 +33,13 @@ func ok(c *gin.Context, fn objFunc) {
 func created(c *gin.Context, fn locFunc) {
 	loc, err := fn()
 
+	if code, ok := err.(api.HttpStatusCode); ok {
+		c.Status(int(code))
+		return
+	}
+
 	if err != nil {
-		internalServerError(c, err)
+		c.Error(err)
 		return
 	}
 
@@ -53,16 +57,11 @@ func noContent(c *gin.Context, fn errFunc) {
 	}
 
 	if err != nil {
-		internalServerError(c, err)
+		c.Error(err)
 		return
 	}
 
 	c.Status(http.StatusNoContent)
-}
-
-func internalServerError(c *gin.Context, err error) {
-	log.Println(err)
-	c.AbortWithError(http.StatusInternalServerError, err)
 }
 
 func setLocation(c *gin.Context, loc string) {

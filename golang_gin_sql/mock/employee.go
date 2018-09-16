@@ -1,97 +1,47 @@
 package mock
 
 import (
-	"log"
-	"math/rand"
-	"strconv"
-	"time"
-
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
+	"github.com/stretchr/testify/mock"
 )
 
 type EmployeeService struct {
-	SaveEmployeeFn             func(employee *api.Employee) error
-	SaveEmployeeCalled         bool
-	FindAllEmployeesFn         func() (*api.Employees, error)
-	FindAllEmployeesCalled     bool
-	FindEmployeeByIDFn         func(employeeID string) (*api.Employee, error)
-	FindEmployeeByIDCalled     bool
-	DeleteEmployeeWithIDFn     func(employeeID string) error
-	DeleteEmployeeWithIDCalled bool
+	mock.Mock
 }
 
 func (m *EmployeeService) SaveEmployee(employee *api.Employee) error {
-	log.Printf("[mock.EmployeeService] SaveEmployee(employee = %+v)\n", employee)
-
-	m.SaveEmployeeCalled = true
-
-	if m.SaveEmployeeFn == nil {
-		return nil
-	}
-
-	return m.SaveEmployeeFn(employee)
+	args := m.Called(employee)
+	return args.Error(0)
 }
 
 func (m *EmployeeService) FindAllEmployees() (*api.Employees, error) {
-	log.Println("[mock.EmployeeService] FindAllEmployees()")
+	args := m.Called()
+	obj := args.Get(0)
 
-	m.FindAllEmployeesCalled = true
-
-	if m.FindAllEmployeesFn == nil {
-		return nil, nil
+	if obj == nil {
+		return nil, args.Error(1)
 	}
 
-	return m.FindAllEmployeesFn()
+	return obj.(*api.Employees), args.Error(1)
 }
 
 func (m *EmployeeService) FindEmployeeByID(employeeID string) (*api.Employee, error) {
-	log.Printf("[mock.EmployeeService] FindEmployeeByID(employeeID = %s)\n", employeeID)
+	args := m.Called(employeeID)
+	obj := args.Get(0)
 
-	m.FindEmployeeByIDCalled = true
-
-	if m.FindEmployeeByIDFn == nil {
-		return nil, nil
+	if obj == nil {
+		return nil, args.Error(1)
 	}
 
-	return m.FindEmployeeByIDFn(employeeID)
+	return obj.(*api.Employee), args.Error(1)
 }
 
 func (m *EmployeeService) DeleteEmployeeWithID(employeeID string) error {
-	log.Printf("[mock.EmployeeService] DeleteEmployeeWithID(employeeID = %s)\n", employeeID)
-
-	m.DeleteEmployeeWithIDCalled = true
-
-	if m.DeleteEmployeeWithIDFn == nil {
-		return nil
-	}
-
-	return m.DeleteEmployeeWithIDFn(employeeID)
+	args := m.Called(employeeID)
+	return args.Error(0)
 }
 
 // DefaultEmployeeService constructs a mocked EmployeeService using some sensible defaults
 func DefaultEmployeeService() *EmployeeService {
-	return &EmployeeService{
-		SaveEmployeeFn: func(employee *api.Employee) error {
-			employee.ID = strconv.Itoa(rand.Intn(100) + 1)
-			return nil
-		},
-		FindAllEmployeesFn: func() (*api.Employees, error) {
-			return &api.Employees{
-				&api.Employee{
-					ID:          "1",
-					DateOfBirth: &api.Date{Time: time.Now()},
-					FirstName:   "First",
-					LastName:    "Last",
-				},
-			}, nil
-		},
-		FindEmployeeByIDFn: func(employeeID string) (*api.Employee, error) {
-			return &api.Employee{
-				ID:          employeeID,
-				DateOfBirth: &api.Date{Time: time.Now()},
-				FirstName:   "First",
-				LastName:    "Last",
-			}, nil
-		},
-	}
+	return new(EmployeeService)
 }

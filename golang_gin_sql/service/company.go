@@ -20,12 +20,16 @@ func (s *companyService) FindAllCompanies() (*api.Companies, error) {
 }
 
 func (s *companyService) FindCompanyByID(companyID string) (company *api.Company, err error) {
-	companies := make(chan *api.Company)
-	employees := make(chan *api.Employees)
-	errs := make(chan error)
+	companies := make(chan *api.Company, 1)
+	employees := make(chan *api.Employees, 1)
+	errs := make(chan error, 2)
+	wg := sync.WaitGroup{}
+
+	wg.Add(2)
 
 	go func() {
 		defer close(companies)
+		defer wg.Done()
 
 		c, err := sql.FindCompanyByID(s.db, companyID)
 
@@ -39,6 +43,7 @@ func (s *companyService) FindCompanyByID(companyID string) (company *api.Company
 
 	go func() {
 		defer close(employees)
+		defer wg.Done()
 
 		e, err := sql.FindCompanyEmployees(s.db, companyID)
 
@@ -50,13 +55,18 @@ func (s *companyService) FindCompanyByID(companyID string) (company *api.Company
 		employees <- e
 	}()
 
-	select {
-	case err = <-errs:
-		return
-	case company = <-companies:
-		company.Employees = <-employees
-		return
+	wg.Wait()
+
+	close(errs)
+
+	if len(errs) > 0 {
+		return nil, <-errs
 	}
+
+	company = <-companies
+	company.Employees = <-employees
+
+	return company, nil
 }
 
 func (s *companyService) DeleteCompanyWithID(companyID string) error {

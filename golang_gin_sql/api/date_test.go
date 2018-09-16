@@ -2,39 +2,30 @@ package api_test
 
 import (
 	"encoding/json"
+	"testing"
 	"time"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/assert"
 
-	. "github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
+	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
 )
 
-var _ = Describe("Date", func() {
+func TestDate(t *testing.T) {
+	t.Run("should marshal date as json", func(t *testing.T) {
+		d := api.NewDate(2018, time.December, 24)
 
-	It("should marshal date as json", func() {
-		t, err := time.Parse(DateLayout, "2018-12-24")
+		actual, err := json.Marshal(&d)
 
-		Expect(err).ToNot(HaveOccurred())
-
-		d := &Date{Time: t}
-
-		res, err := json.Marshal(d)
-
-		Expect(err).ToNot(HaveOccurred())
-		Expect(res).To(MatchJSON("[2018,12,24]"))
+		assert.NoError(t, err)
+		assert.JSONEq(t, `[2018,12,24]`, string(actual))
 	})
 
-	It("should unmarshal json as date", func() {
-		t, err := time.Parse(DateLayout, "2018-12-24")
+	t.Run("should unmarshal json as date", func(t *testing.T) {
+		var actual api.Date
 
-		Expect(err).ToNot(HaveOccurred())
+		err := json.Unmarshal([]byte("[2018,12,24]"), &actual)
 
-		var d *Date
-
-		err = json.Unmarshal([]byte("[2018,12,24]"), &d)
-
-		Expect(err).ToNot(HaveOccurred())
-		Expect(d.Time).To(BeTemporally("==", t))
+		assert.NoError(t, err)
+		assert.Equal(t, api.NewDate(2018, time.December, 24), actual)
 	})
-})
+}

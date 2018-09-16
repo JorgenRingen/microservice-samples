@@ -1,19 +1,18 @@
 package http
 
 import (
-	"github.com/di0nys1us/microservice-samples/golang_gin_sql/service"
-	"github.com/di0nys1us/microservice-samples/golang_gin_sql/sql"
+	"log"
+	"net/http"
+
+	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
 
 	"github.com/gin-gonic/gin"
 )
 
-// NewRouter constructs a default Gin router with all routes configured
-func NewRouter(db *sql.DB) *gin.Engine {
-	router := gin.Default()
+// Configure TODO
+func Configure(router *gin.Engine, companyService api.CompanyService, employeeService api.EmployeeService) {
 	router.RedirectTrailingSlash = false
-
-	companyService := service.Company(db)
-	employeeService := service.Employee(db)
+	router.Use(errorHandler())
 
 	companies := router.Group("/companies")
 	// Create new company
@@ -48,6 +47,20 @@ func NewRouter(db *sql.DB) *gin.Engine {
 	employee.PUT("", putEmployeeWithIDHandler(employeeService))
 	// Delete employee with ID
 	employee.DELETE("", deleteEmployeeWithIDHandler(employeeService))
+}
 
-	return router
+func errorHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+
+		if len(c.Errors) > 0 {
+			c.Status(http.StatusInternalServerError)
+		}
+
+		if gin.Mode() != gin.TestMode {
+			for _, err := range c.Errors {
+				log.Println(err)
+			}
+		}
+	}
 }
