@@ -1,6 +1,5 @@
-package org.example.demoapp.resource;
+package org.example.demoapp.company;
 
-import org.example.demoapp.entity.Company;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

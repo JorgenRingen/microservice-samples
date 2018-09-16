@@ -59,7 +59,7 @@ class EmployeesTest {
     }
 
     @Test
-    void deleteEmployeeThatDoesntExistShouldReturn404() {
+    void deleteEmployeeThatDoesntExistShouldReturn204() {
         ResponseEntity responseEntity = restClient.deleteEmployee(-99999L);
         assertThat(responseEntity.getStatusCode()).as("DELETE request to '/employees/{employeeId}' with id that doesn't exist should return 204").isEqualTo(HttpStatus.NO_CONTENT);
     }

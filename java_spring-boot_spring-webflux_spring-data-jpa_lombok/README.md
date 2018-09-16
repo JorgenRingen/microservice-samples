@@ -2,7 +2,7 @@
 
 # Sample Java and Spring Webflux (functional style) application
 
-Uses the postgres driver which is blocking, so not a true reactive application, but it demonstrates the functional webflux paradigm.   
+Uses the official postgres jdbc-driver which is blocking, so not a "true" reactive application, but it demonstrates the functional webflux paradigm.   
 
 Technologies:
 - JDK 8

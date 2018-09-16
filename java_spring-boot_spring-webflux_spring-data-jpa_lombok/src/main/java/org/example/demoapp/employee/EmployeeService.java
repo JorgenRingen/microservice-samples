@@ -1,5 +1,7 @@
 package org.example.demoapp.employee;
 
+import reactor.core.publisher.Mono;
+
 import javax.transaction.Transactional;
 
 import java.util.List;
@@ -25,18 +27,19 @@ public class EmployeeService {
         return employeeRepository.findById(id);
     }
 
-    public Employee save(Employee employee) {
-        return employeeRepository.save(employee);
+    public Employee save(Mono<Employee> employeeMono) {
+        return employeeRepository.save(employeeMono.toProcessor().block()); // needs to block
     }
 
-    public void delete(long id) {
+    public void deleteById(long id) {
         employeeRepository.findById(id)
                 .ifPresent(employeeRepository::delete);
     }
 
-    public void updateEmployee(long id, Employee employee) {
+    public void updateEmployee(long id, Mono<Employee> employeeMono) {
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(EmployeeNotFoundException::new);
-        existingEmployee.updateFrom(employee);
+
+        existingEmployee.updateFrom(employeeMono.toProcessor().block()); // needs to block
     }
 }

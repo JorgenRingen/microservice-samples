@@ -1,6 +1,9 @@
 package org.example.demoapp.company;
 
-import javax.transaction.Transactional;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,43 +11,38 @@ import java.util.Optional;
 import org.example.demoapp.employee.Employee;
 import org.example.demoapp.employee.EmployeeNotFoundException;
 import org.example.demoapp.employee.EmployeeService;
-import org.springframework.stereotype.Service;
 
-@Service
-@Transactional
+@Stateless
 public class CompanyService {
 
-    private final CompanyRepository companyRepository;
-    private final EmployeeService employeeService;
+    @PersistenceContext
+    private EntityManager em;
 
-    public CompanyService(CompanyRepository companyRepository,
-                          EmployeeService employeeService) {
-        this.companyRepository = companyRepository;
-        this.employeeService = employeeService;
-    }
+    @Inject
+    private EmployeeService employeeService;
 
     public List<Company> findAll() {
-        return companyRepository.findAll();
+        return em.createQuery("select c from Company c").getResultList();
     }
 
     public Optional<Company> findById(long id) {
-        return companyRepository.findById(id);
+        return Optional.ofNullable(em.find(Company.class, id));
     }
 
-    public Company save(Company company) {
-        return companyRepository.save(company);
+    public Company save(Company employee) {
+        return em.merge(employee);
     }
 
     public void delete(long id) {
-        companyRepository.findById(id)
-                .ifPresent(companyRepository::delete);
+        findById(id)
+                .ifPresent(em::remove);
     }
 
     public void addEmployee(long companyId, long employeeId) {
-        Company company = companyRepository.findById(companyId)
+        Company company = findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
 
-        if (company.isEmployeeEmployed(employeeId)) {
+        if (company.isEmployed(employeeId)) {
             throw new EmployeeAlreadyEmployedInCompanyException(companyId, employeeId);
         }
 
@@ -55,7 +53,7 @@ public class CompanyService {
     }
 
     public void removeEmployee(long companyId, long employeeId) {
-        companyRepository.findById(companyId)
+        findById(companyId)
                 .ifPresent(company -> company.removeEmployee(employeeId));
     }
 }

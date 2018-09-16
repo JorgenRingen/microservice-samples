@@ -1,6 +1,6 @@
 # Sample application
 
-TODO: Transaction handling, awaits, etc...
+TODO: Needs to be rewritten to new simplified API
 
 Technologies:
 - ES6

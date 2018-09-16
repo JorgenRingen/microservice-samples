@@ -14,5 +14,5 @@ Username and password is hardcoded for simplicity.
 and docker-compose starts both the demoapp and PostgreSQL in the same network. 
  
 Build: `mvn package`
-Run: `docker-compose up`
+Run: `docker-compose build` && `docker-compose up`
 Cleanup: `docker-compose down`

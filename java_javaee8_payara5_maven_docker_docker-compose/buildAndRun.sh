@@ -1,3 +1,4 @@
 #!/bin/sh
-mvn clean package
+mvn clean install
+docker-compose build
 docker-compose up

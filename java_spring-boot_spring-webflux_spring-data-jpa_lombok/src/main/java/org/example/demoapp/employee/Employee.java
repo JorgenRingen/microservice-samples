@@ -28,10 +28,9 @@ public class Employee {
     private LocalDate dateOfBirth;
 
     void updateFrom(Employee employee) {
-        this.id = employee.id;
         this.firstname = employee.firstname;
-        this.dateOfBirth = employee.dateOfBirth;
         this.lastname = employee.lastname;
+        this.dateOfBirth = employee.dateOfBirth;
     }
 }
 

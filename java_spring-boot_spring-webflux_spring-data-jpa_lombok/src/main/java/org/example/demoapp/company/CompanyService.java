@@ -1,5 +1,7 @@
 package org.example.demoapp.company;
 
+import reactor.core.publisher.Mono;
+
 import javax.transaction.Transactional;
 
 import java.util.List;
@@ -40,10 +42,10 @@ public class CompanyService {
                 .ifPresent(companyRepository::delete);
     }
 
-    public void addEmployee(long companyId, long employeeId) {
+    public void addEmployee(long companyId, Mono<Long> employeeIdMono) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
-
+        long employeeId = employeeIdMono.toProcessor().block(); // needs to block
         if (company.isEmployeeEmployed(employeeId)) {
             throw new EmployeeAlreadyEmployedInCompanyException(companyId, employeeId);
         }

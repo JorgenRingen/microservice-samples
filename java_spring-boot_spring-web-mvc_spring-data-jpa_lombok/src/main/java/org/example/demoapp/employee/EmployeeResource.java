@@ -1,12 +1,9 @@
-package org.example.demoapp.resource;
+package org.example.demoapp.employee;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import org.example.demoapp.entity.Employee;
-import org.example.demoapp.service.EmployeeNotFoundException;
-import org.example.demoapp.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,7 +58,7 @@ public class EmployeeResource {
 
     @DeleteMapping("{id}")
     public ResponseEntity delete(@PathVariable long id) {
-        employeeService.deleteById(id);
+        employeeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

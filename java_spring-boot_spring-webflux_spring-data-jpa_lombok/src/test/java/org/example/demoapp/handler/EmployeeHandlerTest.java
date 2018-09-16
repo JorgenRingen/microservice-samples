@@ -1,10 +1,9 @@
 package org.example.demoapp.handler;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import org.example.demoapp.entity.Employee;
-import org.example.demoapp.repository.EmployeeRepository;
+import org.example.demoapp.employee.Employee;
+import org.example.demoapp.employee.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

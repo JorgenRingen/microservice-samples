@@ -1,5 +1,4 @@
-package org.example.demoapp.company;
+package org.example.demoapp.company
 
 class CompanyNotFoundException extends RuntimeException {
-
 }
