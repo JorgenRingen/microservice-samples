@@ -59,16 +59,13 @@ class EmployeesTest {
     }
 
     @Test
-    void deleteEmployeeThatDoesntExistShouldReturn404() {
-        Throwable thrown = catchThrowable(() -> restClient.deleteEmployee(-99999));
-        assertThat(thrown)
-                .as("DELETE request to '/employees/{employeeId}' with id that doesn't exist should return 404")
-                .isInstanceOf(HttpClientErrorException.class)
-                .hasMessageContaining(HttpStatus.NOT_FOUND.toString());
+    void deleteEmployeeThatDoesntExistShouldReturn204() {
+        ResponseEntity responseEntity = restClient.deleteEmployee(-99999L);
+        assertThat(responseEntity.getStatusCode()).as("DELETE request to '/employees/{employeeId}' with id that doesn't exist should return 204").isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
-    void crudEmployeeShouldWorkAccordingToHttpSpec() {
+    void crudEmployeeShouldWorkAccordingToApiSpec() {
         long employeeId = createEmployee();
         updateEmployee(employeeId);
         deleteEmployee(employeeId);

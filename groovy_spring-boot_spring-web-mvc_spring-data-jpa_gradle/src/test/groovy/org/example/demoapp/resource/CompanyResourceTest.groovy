@@ -1,6 +1,6 @@
 package org.example.demoapp.resource
 
-import org.example.demoapp.entity.Company
+import org.example.demoapp.company.Company
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

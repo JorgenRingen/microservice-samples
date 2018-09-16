@@ -10,5 +10,5 @@ create table employee (
 
 create table company_employees (
   company_id   bigserial not null references company,
-  employees_id bigserial not null unique references employee,
-  constraint company_employees_pkey primary key (company_id, employees_id));
+  employee_id bigserial not null references employee,
+  constraint company_employees_pkey primary key (company_id, employee_id));

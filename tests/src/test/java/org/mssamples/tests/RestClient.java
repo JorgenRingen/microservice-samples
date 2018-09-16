@@ -13,8 +13,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,9 +49,22 @@ class RestClient {
 
     private RestTemplate createRestTemplate() {
         HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-        httpComponentsClientHttpRequestFactory.setReadTimeout(5_000);
-        return new RestTemplate(httpComponentsClientHttpRequestFactory);
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(10_000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(10_000);
+
+        RestTemplate restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+        messageConverter.setPrettyPrint(false);
+        messageConverter.setObjectMapper(objectMapper);
+        restTemplate.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName()));
+        restTemplate.getMessageConverters().add(messageConverter);
+
+        return restTemplate;
     }
 
     // Employee
@@ -75,9 +93,9 @@ class RestClient {
         return restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(employeeToUpdate), Employee.class);
     }
 
-    void deleteEmployee(long id) {
-        String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("employees/" + id).toUriString();
-        restTemplate.delete(uri);
+    ResponseEntity deleteEmployee(long employeeId) {
+        String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("employees/" + employeeId).toUriString();
+        return restTemplate.exchange(uri, HttpMethod.DELETE, null, Object.class);
     }
 
     // Company
@@ -101,16 +119,16 @@ class RestClient {
         return restTemplate.getForEntity(uri, Company.class);
     }
 
-    void deleteCompany(long companyId) {
+    ResponseEntity deleteCompany(long companyId) {
         String uri = UriComponentsBuilder.fromHttpUrl(APP_URL).path("companies/" + companyId).toUriString();
-        restTemplate.delete(uri);
+        return restTemplate.exchange(uri, HttpMethod.DELETE, null, Object.class);
     }
 
     ResponseEntity<Company> addEmployeeToCompany(long companyId, long employeeId) {
         return restTemplate.postForEntity(APP_URL + "/companies/" + companyId + "/employees", employeeId, Company.class);
     }
 
-    ResponseEntity<Object> removeEmployeeFromCompany(long companyId, long employeeId) {
+    ResponseEntity removeEmployeeFromCompany(long companyId, long employeeId) {
         return restTemplate.exchange(APP_URL + "/companies/" + companyId + "/employees/" + employeeId, HttpMethod.DELETE, null, Object.class);
     }
 }
