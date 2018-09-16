@@ -17,13 +17,20 @@ func TestDate(t *testing.T) {
 		actual, err := json.Marshal(&d)
 
 		assert.NoError(t, err)
-		assert.JSONEq(t, `[2018,12,24]`, string(actual))
+		assert.JSONEq(t, `"2018-12-24"`, string(actual))
+
+		d = api.Date{Time: time.Time{}}
+
+		actual, err = json.Marshal(&d)
+
+		assert.NoError(t, err)
+		assert.JSONEq(t, `null`, string(actual))
 	})
 
 	t.Run("should unmarshal json as date", func(t *testing.T) {
 		var actual api.Date
 
-		err := json.Unmarshal([]byte("[2018,12,24]"), &actual)
+		err := json.Unmarshal([]byte(`"2018-12-24"`), &actual)
 
 		assert.NoError(t, err)
 		assert.Equal(t, api.NewDate(2018, time.December, 24), actual)

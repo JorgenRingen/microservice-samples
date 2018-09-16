@@ -26,7 +26,13 @@ func (s *employeeService) FindEmployeeByID(employeeID string) (*api.Employee, er
 }
 
 func (s *employeeService) DeleteEmployeeWithID(employeeID string) error {
-	return sql.DeleteEmployeeWithID(s.db, employeeID)
+	err := sql.DeleteEmployeeWithID(s.db, employeeID)
+
+	if err == api.ErrNotFound {
+		return nil
+	}
+
+	return err
 }
 
 // Employee constructs an EmployeeService

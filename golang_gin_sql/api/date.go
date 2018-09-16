@@ -3,12 +3,11 @@ package api
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"fmt"
 	"time"
 )
 
 const (
-	DateLayout = "2006-1-2"
+	DateLayout = "2006-01-02"
 )
 
 type Date struct {
@@ -21,10 +20,10 @@ func (d *Date) MarshalJSON() ([]byte, error) {
 	}
 
 	if d.Time.IsZero() {
-		return []byte("[]"), nil
+		return []byte("null"), nil
 	}
 
-	return json.Marshal([3]int{d.Year(), int(d.Month()), d.Day()})
+	return json.Marshal(d.Format(DateLayout))
 }
 
 func (d *Date) UnmarshalJSON(b []byte) (err error) {
@@ -32,15 +31,15 @@ func (d *Date) UnmarshalJSON(b []byte) (err error) {
 		return
 	}
 
-	var a [3]int
+	var s string
 
-	err = json.Unmarshal(b, &a)
+	err = json.Unmarshal(b, &s)
 
 	if err != nil {
 		return
 	}
 
-	t, err := time.Parse(DateLayout, fmt.Sprintf("%d-%d-%d", a[0], a[1], a[2]))
+	t, err := time.Parse(DateLayout, s)
 
 	if err != nil {
 		return

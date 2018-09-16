@@ -75,7 +75,13 @@ func (s *companyService) FindCompanyByID(companyID string) (company *api.Company
 }
 
 func (s *companyService) DeleteCompanyWithID(companyID string) error {
-	return sql.DeleteCompanyWithID(s.db, companyID)
+	err := sql.DeleteCompanyWithID(s.db, companyID)
+
+	if err == api.ErrNotFound {
+		return nil
+	}
+
+	return err
 }
 
 func (s *companyService) AddEmployeeToCompany(companyID string, employeeID string) (err error) {
@@ -93,39 +99,6 @@ func (s *companyService) AddEmployeeToCompany(companyID string, employeeID strin
 }
 
 func (s *companyService) RemoveEmployeeFromCompany(companyID string, employeeID string) (err error) {
-	errs := make(chan error, 2)
-	wg := sync.WaitGroup{}
-
-	wg.Add(2)
-
-	go func() {
-		defer wg.Done()
-
-		_, err := sql.FindCompanyByID(s.db, companyID)
-
-		if err != nil {
-			errs <- err
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-
-		_, err := sql.FindEmployeeByID(s.db, employeeID)
-
-		if err != nil {
-			errs <- err
-		}
-	}()
-
-	wg.Wait()
-
-	close(errs)
-
-	if len(errs) > 0 {
-		return <-errs
-	}
-
 	err = sql.RemoveEmployeeFromCompany(s.db, companyID, employeeID)
 
 	if err == api.ErrNotFound {

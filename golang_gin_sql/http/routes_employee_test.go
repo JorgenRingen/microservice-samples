@@ -29,7 +29,7 @@ func TestEmployeeRoutes(t *testing.T) {
 		{
 			method:     http.MethodPost,
 			target:     "/employees",
-			body:       `{ "dateOfBirth": [1980, 12, 20] }`,
+			body:       `{ "dateOfBirth": "1980-12-20" }`,
 			statusCode: http.StatusCreated,
 			location:   "http://example.com/employees/1",
 			configure: func(m *mock.EmployeeService) {
@@ -39,7 +39,7 @@ func TestEmployeeRoutes(t *testing.T) {
 		{
 			method:     http.MethodPost,
 			target:     "/employees",
-			body:       `{ "dateOfBirth": [1980, 12, 20] }`,
+			body:       `{ "dateOfBirth": "1980-12-20" }`,
 			statusCode: http.StatusInternalServerError,
 			configure: func(m *mock.EmployeeService) {
 				m.On("SaveEmployee", &api.Employee{DateOfBirth: &date}).Return(errors.New("failed"))
@@ -88,7 +88,7 @@ func TestEmployeeRoutes(t *testing.T) {
 		{
 			method:     http.MethodPut,
 			target:     "/employees/1",
-			body:       `{ "id": "1", "dateOfBirth": [1980, 12, 20] }`,
+			body:       `{ "id": "1", "dateOfBirth": "1980-12-20" }`,
 			statusCode: http.StatusNoContent,
 			configure: func(m *mock.EmployeeService) {
 				m.On("SaveEmployee", &api.Employee{ID: "1", DateOfBirth: &date}).Return(nil)
@@ -97,14 +97,14 @@ func TestEmployeeRoutes(t *testing.T) {
 		{
 			method:     http.MethodPut,
 			target:     "/employees/1",
-			body:       `{ "id": "2", "dateOfBirth": [1980, 12, 20] }`,
+			body:       `{ "id": "2", "dateOfBirth": "1980-12-20" }`,
 			statusCode: http.StatusBadRequest,
 			configure:  func(m *mock.EmployeeService) {},
 		},
 		{
 			method:     http.MethodPut,
 			target:     "/employees/1",
-			body:       `{ "id": "1", "dateOfBirth": [1980, 12, 20] }`,
+			body:       `{ "id": "1", "dateOfBirth": "1980-12-20" }`,
 			statusCode: http.StatusInternalServerError,
 			configure: func(m *mock.EmployeeService) {
 				m.On("SaveEmployee", &api.Employee{ID: "1", DateOfBirth: &date}).Return(errors.New("failed"))

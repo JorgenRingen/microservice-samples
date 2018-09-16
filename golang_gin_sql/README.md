@@ -43,6 +43,8 @@ $ docker-compose up -d
 $ ./run
 ```
 
+The API can now be accessed at [http://localhost:3000](http://localhost:3000).
+
 ## Build the application
 
 ```bash
@@ -53,13 +55,23 @@ OR
 $ go install
 ```
 
-The last command will place the executable in $GOPATH/bin as $GOPATH/bin/server.
+The last command will place the executable in $GOPATH/bin ($GOPATH/bin/server).
+
+## Build and run the application
+
+```bash
+$ ./buildAndRun.sh
+```
+
+The API can now be accessed at [http://localhost:3001](http://localhost:3001).
 
 ## Build and run the application using Docker Compose
 
 ```bash
 $ docker-compose -f docker-compose.ci.yml up -d
 ```
+
+The API can now be accessed at [http://localhost:8080](http://localhost:8080).
 
 ## Run the tests
 
