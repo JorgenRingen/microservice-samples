@@ -31,12 +31,6 @@ func main() {
 
 	defer sql.Close(db)
 
-	if mode, ok := os.LookupEnv("MODE"); ok {
-		gin.SetMode(mode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
 	router := gin.Default()
 	companyService := service.Company(db)
 	employeeService := service.Employee(db)

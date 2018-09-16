@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
@@ -12,7 +13,11 @@ type companyService struct {
 }
 
 func (s *companyService) SaveCompany(company *api.Company) error {
-	return sql.SaveCompany(s.db, company)
+	if company.ID == "" {
+		return sql.SaveCompany(s.db, company)
+	}
+
+	return errors.New("company update not implemented")
 }
 
 func (s *companyService) FindAllCompanies() (*api.Companies, error) {

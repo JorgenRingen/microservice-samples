@@ -9,11 +9,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Configure TODO
+// Configure all the API routes for the application
 func Configure(router *gin.Engine, companyService api.CompanyService, employeeService api.EmployeeService) {
 	router.RedirectTrailingSlash = false
 	router.Use(errorHandler())
 
+	configureCompanyRoutes(router, companyService)
+	configureEmployeeRoutes(router, employeeService)
+}
+
+func errorHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+
+		if len(c.Errors) > 0 {
+			c.Status(http.StatusInternalServerError)
+		}
+
+		if gin.Mode() != gin.TestMode {
+			for _, err := range c.Errors {
+				log.Println(err)
+			}
+		}
+	}
+}
+
+func configureCompanyRoutes(router *gin.Engine, companyService api.CompanyService) {
 	companies := router.Group("/companies")
 	// Create new company
 	companies.POST("", postCompanyHandler(companyService))
@@ -33,7 +54,9 @@ func Configure(router *gin.Engine, companyService api.CompanyService, employeeSe
 	companyEmployee := companyEmployees.Group("/:employeeID")
 	// Remove employee from company
 	companyEmployee.DELETE("", deleteEmployeeFromCompanyHandler(companyService))
+}
 
+func configureEmployeeRoutes(router *gin.Engine, employeeService api.EmployeeService) {
 	employees := router.Group("/employees")
 	// Create new employee
 	employees.POST("", postEmployeeHandler(employeeService))
@@ -47,20 +70,4 @@ func Configure(router *gin.Engine, companyService api.CompanyService, employeeSe
 	employee.PUT("", putEmployeeWithIDHandler(employeeService))
 	// Delete employee with ID
 	employee.DELETE("", deleteEmployeeWithIDHandler(employeeService))
-}
-
-func errorHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		if len(c.Errors) > 0 {
-			c.Status(http.StatusInternalServerError)
-		}
-
-		if gin.Mode() != gin.TestMode {
-			for _, err := range c.Errors {
-				log.Println(err)
-			}
-		}
-	}
 }

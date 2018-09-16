@@ -1,5 +1,9 @@
 .env
-gin-bin
-start
 .gitignore
+docker-compose.ci.yml
 docker-compose.yml
+Dockerfile
+gin-bin
+README.md
+run
+test

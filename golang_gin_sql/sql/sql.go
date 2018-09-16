@@ -9,17 +9,17 @@ import (
 	"github.com/di0nys1us/microservice-samples/golang_gin_sql/api"
 )
 
-// Queryer TODO
+// A Queryer queries for multiple rows
 type Queryer interface {
 	Query(query string, args ...interface{}) (*sql.Rows, error)
 }
 
-// RowQueryer TODO
+// A RowQueryer queries for a single row
 type RowQueryer interface {
 	QueryRow(query string, args ...interface{}) *sql.Row
 }
 
-// Execer TODO
+// An Execer executes a query
 type Execer interface {
 	Exec(query string, args ...interface{}) (sql.Result, error)
 }
