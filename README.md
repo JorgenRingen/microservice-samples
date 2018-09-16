@@ -6,7 +6,7 @@ Shows how a simple REST API can be implemented with different technology stacks.
 Implementations can be found in the subfolders. Please name the application folder by listing the most essential technologies separated by underscore (for example: spring-boot_spring-data-jpa_spring-web). If the application is "work in progress", please prefix the folder name with "wip_"
 
 ### API
-All applications must implement a CRUD-style REST-api according to this [swagger definition](https://app.swaggerhub.com/apis/JorgenRingen/microservice-samples/0.9#/)
+All applications must implement a CRUD-style REST-api according to [this swagger definition](https://app.swaggerhub.com/apis/JorgenRingen/microservice-samples/0.9#/)
 
 <img src="https://i.imgur.com/wPQ0GYz.png" width="75%" height="75%">
 
