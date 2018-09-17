@@ -7,7 +7,7 @@ This version of the microservice samples showcase use of the
 
 To be able to develop and build Go applications you need to download and configure the Go developer tools. Instructions and downloads for your system can be found [here](https://golang.org/dl/). 
 
-Most Linux distributions has prebuilt packages for Go available. The easiest way to get started writing Go applications is to install the correct package from the official repositories of your distribution. On Arch and derivatives you can just do `pacman -S go` or on Ubuntu `apt-get install golang`. If you are on macOS and have Homebrew installed you can install the Go tools with `brew install go`.
+Most Linux distributions has prebuilt packages for Go available. The easiest way to get started writing Go applications is to install the correct package from the official repositories of your distribution. On Arch and derivatives you can just do `pacman -S go` or on Ubuntu `apt-get install golang`. If you are on macOS and have [Homebrew](https://brew.sh/) installed you can install the Go tools with `brew install go`.
 
 For working with Go code I can recommend just using Visual Studio Code with the excellent [Go extension from Microsoft](https://code.visualstudio.com/docs/languages/go). You can also use a full fledged IDE like [Goland](https://www.jetbrains.com/go/) from Jetbrains or just install and enable the Go plugin in IntelliJ IDEA.
 
@@ -37,7 +37,7 @@ The application uses some environment variables that are read from the .env file
 $ docker-compose up -d
 ```
 
-### Start the application in development mode
+### Start the application in development mode using Gin
 
 ```bash
 $ ./run
@@ -68,12 +68,16 @@ The API can now be accessed at [http://localhost:3001](http://localhost:3001).
 ## Build and run the application using Docker Compose
 
 ```bash
-$ docker-compose -f docker-compose.ci.yml up -d
+$ docker-compose -f docker-compose.build.yml up -d
 ```
 
 The API can now be accessed at [http://localhost:8080](http://localhost:8080).
 
 ## Run the tests
+
+The tests are written using the Golang standard library's testing and httptest packages. The [Testify](https://github.com/stretchr/testify) framework is used for mocks and assertions.
+
+Run the tests from all packages using the following command:
 
 ```bash
 $ ./test
