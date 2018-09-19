@@ -1,7 +1,7 @@
 FROM payara/server-full
 
 # add postgresql driver to payara
-COPY server/postgresql-42.2.5.jar ${PAYARA_PATH}/glassfish/domains/domain1/lib
+COPY lib/postgresql-42.2.5.jar ${PAYARA_PATH}/glassfish/domains/domain1/lib
 
 # add postgresql connection-pool datasource to payara server by using asadmin
 RUN ${PAYARA_PATH}/bin/asadmin start-domain domain1 && \
